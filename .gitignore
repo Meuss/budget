@@ -1,0 +1,37 @@
+*.log
+.DS_Store
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+/.codex
+/.cursor/
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+/node_modules
+/public/build
+/public/fonts-manifest.dev.json
+/public/hot
+/public/static
+/public/storage
+/public/vendor/statamic
+/storage/*.key
+/storage/pail
+/vendor
+
+# Admin login (email + password hash) — never commit to a public repo.
+/users/*
+!/users/.gitkeep
+
+# Personal category data — keep it local/private; others get a starter set via `php artisan seed:budget`.
+/content/collections/categories/*
+!/content/collections/categories/.gitkeep
+_ide_helper.php
+Homestead.json
+Homestead.yaml
+Thumbs.db

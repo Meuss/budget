@@ -1,0 +1,50 @@
+title: Catégorie
+tabs:
+  main:
+    display: Général
+    sections:
+      -
+        fields:
+          -
+            handle: title
+            field:
+              type: text
+              display: Nom
+              required: true
+              width: 50
+          -
+            handle: kind
+            field:
+              type: select
+              display: Type
+              instructions: "Détermine comment la catégorie est traitée dans les graphiques."
+              options:
+                expense: Dépense
+                income: Revenu
+                savings: Épargne
+              default: expense
+              clearable: false
+              width: 50
+          -
+            handle: parent
+            field:
+              type: entries
+              display: 'Catégorie parente'
+              instructions: "Laisser vide pour une catégorie de premier niveau. La renseigner pour créer une sous-catégorie."
+              collections:
+                - categories
+              max_items: 1
+              mode: select
+          -
+            handle: match_terms
+            field:
+              type: list
+              display: "Termes de classement automatique"
+              instructions: "Sous-chaînes (insensibles à la casse) comparées au commerçant / à la description d'une transaction (ex. Migros, Denner). Toute correspondance attribue cette catégorie."
+          -
+            handle: color
+            field:
+              type: text
+              display: 'Couleur (hex)'
+              instructions: 'Couleur de graphique optionnelle, ex. #4f46e5.'
+              width: 50
