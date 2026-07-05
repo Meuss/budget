@@ -9,12 +9,14 @@ class TransactionImporter
 {
     public function __construct(
         protected UbsCsvParser $parser,
+        protected CreditCardCsvParser $cardParser,
         protected ClassifierService $classifier,
     ) {
     }
 
     /**
-     * Import a single CSV file. Dedupes by transaction number and auto-classifies
+     * Import a single CSV file, auto-detecting whether it is a UBS bank-account
+     * or credit-card export. Dedupes by transaction number and auto-classifies
      * new rows. Returns ['new' => int, 'duplicates' => int].
      */
     public function importFile(string $path): array
@@ -23,7 +25,7 @@ class TransactionImporter
         $batch = [];
         $dup = 0;
 
-        foreach ($this->parser->parse($path) as $record) {
+        foreach ($this->parserFor($path)->parse($path) as $record) {
             if ($existing->has($record['transaction_no'])) {
                 $dup++;
 
@@ -47,5 +49,22 @@ class TransactionImporter
         });
 
         return ['new' => $new, 'duplicates' => $dup];
+    }
+
+    /**
+     * Pick the parser by sniffing the file's header. The credit-card export has
+     * an unmistakable header row ("Date d'achat" / "Texte comptable"); everything
+     * else is treated as a UBS bank-account export.
+     */
+    protected function parserFor(string $path): UbsCsvParser|CreditCardCsvParser
+    {
+        $head = (string) file_get_contents($path, false, null, 0, 4096);
+        if (! mb_check_encoding($head, 'UTF-8')) {
+            $head = mb_convert_encoding($head, 'UTF-8', 'Windows-1252');
+        }
+
+        return str_contains($head, "Date d'achat") || str_contains($head, 'Texte comptable')
+            ? $this->cardParser
+            : $this->parser;
     }
 }

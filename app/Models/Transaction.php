@@ -14,6 +14,7 @@ class Transaction extends Model
         'amount' => 'decimal:2',
         'balance' => 'decimal:2',
         'is_savings' => 'boolean',
+        'is_transfer' => 'boolean',
         'raw' => 'array',
     ];
 

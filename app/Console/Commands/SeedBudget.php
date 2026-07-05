@@ -23,6 +23,9 @@ class SeedBudget extends Command
         return [
             ['income', 'Revenus', 'income', ['salaire', 'salary', 'bonus', 'remboursement', 'virement en votre faveur'], []],
             ['savings', 'Épargne', 'savings', ['epargne', 'épargne'], []],
+            // Internal transfers (e.g. paying the card bill). Excluded from every
+            // total. No auto-match terms — classified by hand.
+            ['transfer', 'Transferts internes', 'transfer', [], []],
 
             ['housing', 'Logement', 'expense', ['loyer'], [
                 ['housing-rent', 'Loyer', 'expense', ['loyer'], []],

@@ -22,6 +22,7 @@ tabs:
                 expense: Dépense
                 income: Revenu
                 savings: Épargne
+                transfer: Transfert interne
               default: expense
               clearable: false
               width: 50

@@ -1,6 +1,6 @@
 <div>
     <h1>Importer des transactions</h1>
-    <p class="sub">Importez votre/vos export(s) CSV UBS. Les lignes sont dédupliquées par numéro de transaction : réimporter est sans risque.</p>
+    <p class="sub">Importez votre/vos export(s) CSV UBS — compte bancaire ou carte de crédit (le format est détecté automatiquement). Les lignes en double sont ignorées : réimporter est sans risque.</p>
 
     <div class="grid cards" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
         <div class="card"><div class="label">En base</div><div class="value">{{ number_format($total, 0, ',', ' ') }}</div></div>

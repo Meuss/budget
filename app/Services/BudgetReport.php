@@ -60,10 +60,10 @@ class BudgetReport
     public function kpis(?string $from, ?string $to): array
     {
         $income = (float) (clone $this->scope($from, $to))
-            ->where('direction', 'credit')->where('is_savings', false)->sum('amount');
+            ->where('direction', 'credit')->where('is_savings', false)->where('is_transfer', false)->sum('amount');
 
         $spending = -1 * (float) (clone $this->scope($from, $to))
-            ->where('direction', 'debit')->where('is_savings', false)->sum('amount');
+            ->where('direction', 'debit')->where('is_savings', false)->where('is_transfer', false)->sum('amount');
 
         $savings = -1 * (float) (clone $this->scope($from, $to))
             ->where('is_savings', true)->sum('amount'); // net into savings
@@ -83,7 +83,7 @@ class BudgetReport
     public function spendingByTopCategory(?string $from, ?string $to): array
     {
         $rows = (clone $this->scope($from, $to))
-            ->where('direction', 'debit')->where('is_savings', false)
+            ->where('direction', 'debit')->where('is_savings', false)->where('is_transfer', false)
             ->selectRaw('category_id, sum(amount) total')
             ->groupBy('category_id')->get();
 
@@ -127,8 +127,8 @@ class BudgetReport
     {
         $rows = (clone $this->scope($from, $to))
             ->selectRaw($this->yearMonthExpr().' ym')
-            ->selectRaw("sum(case when direction='credit' and is_savings=0 then amount else 0 end) income")
-            ->selectRaw("sum(case when direction='debit' and is_savings=0 then -amount else 0 end) spending")
+            ->selectRaw("sum(case when direction='credit' and is_savings=0 and is_transfer=0 then amount else 0 end) income")
+            ->selectRaw("sum(case when direction='debit' and is_savings=0 and is_transfer=0 then -amount else 0 end) spending")
             ->selectRaw('sum(case when is_savings=1 then -amount else 0 end) savings')
             ->groupBy('ym')->orderBy('ym')->get();
 
@@ -166,7 +166,7 @@ class BudgetReport
 
         // Spend grouped by exact category, rolled into top + sub buckets.
         $rows = (clone $this->scope($from, $to))
-            ->where('direction', 'debit')->where('is_savings', false)
+            ->where('direction', 'debit')->where('is_savings', false)->where('is_transfer', false)
             ->selectRaw('category_id, sum(-amount) total')
             ->groupBy('category_id')->get();
 

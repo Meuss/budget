@@ -35,6 +35,7 @@ class ClassifierService
             return [
                 'category_id' => $match['id'],
                 'is_savings' => $match['kind'] === 'savings',
+                'is_transfer' => $match['kind'] === 'transfer',
                 'source' => 'rule',
             ];
         }
@@ -43,6 +44,7 @@ class ClassifierService
             return [
                 'category_id' => $this->categories->savingsCategoryId(),
                 'is_savings' => true,
+                'is_transfer' => false,
                 'source' => 'rule',
             ];
         }
@@ -50,6 +52,7 @@ class ClassifierService
         return [
             'category_id' => null,
             'is_savings' => false,
+            'is_transfer' => false,
             'source' => 'unclassified',
         ];
     }
@@ -135,6 +138,7 @@ class ClassifierService
             }
             if ($t->category_id !== $update['category_id']
                 || (bool) $t->is_savings !== $update['is_savings']
+                || (bool) $t->is_transfer !== $update['is_transfer']
                 || $t->source !== $update['source']) {
                 $t->forceFill($update)->save();
                 $changed++;

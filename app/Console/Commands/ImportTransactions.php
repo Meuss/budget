@@ -10,7 +10,7 @@ class ImportTransactions extends Command
 {
     protected $signature = 'import:transactions {path? : CSV file or directory (defaults to storage/app/imports)}';
 
-    protected $description = 'Import UBS transaction CSV export(s); dedupes by transaction number and auto-classifies new rows.';
+    protected $description = 'Import UBS bank-account or credit-card CSV export(s); auto-detects format, dedupes and auto-classifies new rows.';
 
     public function handle(TransactionImporter $importer): int
     {

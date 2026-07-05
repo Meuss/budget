@@ -80,12 +80,13 @@ class Transactions extends Component
         $t = Transaction::findOrFail($id);
 
         if ($categoryId === '') {
-            $t->forceFill(['category_id' => null, 'is_savings' => false, 'source' => 'manual'])->save();
+            $t->forceFill(['category_id' => null, 'is_savings' => false, 'is_transfer' => false, 'source' => 'manual'])->save();
         } else {
             $kind = app(CategoryService::class)->kindOf($categoryId);
             $t->forceFill([
                 'category_id' => $categoryId,
                 'is_savings' => $kind === 'savings',
+                'is_transfer' => $kind === 'transfer',
                 'source' => 'manual',
             ])->save();
         }
@@ -112,6 +113,7 @@ class Transactions extends Component
         $count = (clone $this->baseQuery())->update([
             'category_id' => $clearing ? null : $this->bulkCategory,
             'is_savings' => $kind === 'savings',
+            'is_transfer' => $kind === 'transfer',
             'source' => 'manual',
         ]);
 
@@ -182,6 +184,7 @@ class Transactions extends Component
         $count = Transaction::whereIn('id', $this->selected)->update([
             'category_id' => $clearing ? null : $this->bulkCategory,
             'is_savings' => $kind === 'savings',
+            'is_transfer' => $kind === 'transfer',
             'source' => 'manual',
         ]);
 
