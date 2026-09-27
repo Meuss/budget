@@ -39,6 +39,12 @@ login (`/cp`); the app lives at `/budget`.
 
 ![Transactions — filter, bulk-assign, and auto/manual classification](screenshot-2.png)
 
+## Deployment
+
+Production lives at https://budget.example.com (Infomaniak). Pushing to `master` tests and
+deploys automatically via GitHub Actions. The CP login requires two-factor authentication. See
+[docs/deployment.md](docs/deployment.md).
+
 ## Tests
 
 ```bash

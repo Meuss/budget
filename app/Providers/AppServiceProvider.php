@@ -20,5 +20,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         \App\Actions\ReclassifyTransactions::register();
+
+        // Re-apply the 2FA gate to Livewire update requests made from the /budget pages.
+        \Livewire\Livewire::addPersistentMiddleware([
+            \Statamic\Http\Middleware\CP\RedirectIfTwoFactorSetupIncomplete::class,
+        ]);
     }
 }

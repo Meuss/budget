@@ -1,0 +1,93 @@
+name: Test & deploy
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  PHP_VERSION: '8.5'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, intl, pdo_sqlite, exif, gd
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run tests
+        run: php artisan test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      # CLI PHP on Infomaniak is picked by path; the site's web PHP is set in the Manager.
+      REMOTE_PHP: /opt/php8.5/bin/php
+      SITE_PATH: ${{ secrets.INFOMANIAK_SITE_PATH }}
+      SSH_TARGET: ${{ secrets.INFOMANIAK_SSH_USER }}@${{ secrets.INFOMANIAK_SSH_HOST }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: mbstring, intl, exif, gd
+          coverage: none
+
+      # Builds vendor/, bootstrap/cache/packages.php and the Statamic CP assets (public/vendor/statamic).
+      - name: Build release
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          echo "${{ secrets.INFOMANIAK_SSH_KEY }}" > ~/.ssh/deploy_key
+          echo "${{ secrets.INFOMANIAK_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+          printf 'Host infomaniak\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/deploy_key\n  IdentitiesOnly yes\n' \
+            "${{ secrets.INFOMANIAK_SSH_HOST }}" "${{ secrets.INFOMANIAK_SSH_USER }}" > ~/.ssh/config
+
+      - name: Enter maintenance mode
+        run: ssh infomaniak "cd '$SITE_PATH' && if [ -f artisan ]; then $REMOTE_PHP artisan down --retry=15 || true; fi"
+
+      # Server-owned state is never touched: .env, users/ (admin login), storage/ (sessions, cache, logs)
+      # and Infomaniak's own files (.user.ini, maintenance page).
+      - name: Upload code
+        run: |
+          rsync -az --delete \
+            --exclude='/.git/' --exclude='/.github/' --exclude='/.claude/' \
+            --exclude='/.env' --exclude='/users/' --exclude='/storage/' \
+            --exclude='/node_modules/' --exclude='/tests/' --exclude='/public/hot' \
+            --exclude='/screenshot*.png' \
+            --exclude='/.user.ini' --exclude='/public/.infomaniak-maintenance.html' \
+            ./ "infomaniak:$SITE_PATH/"
+
+      - name: Migrate, cache and go live
+        run: |
+          ssh infomaniak "set -e
+            cd '$SITE_PATH'
+            mkdir -p storage/app/private storage/app/public storage/framework/cache/data \
+                     storage/framework/sessions storage/framework/views storage/logs
+            $REMOTE_PHP artisan migrate --force
+            $REMOTE_PHP artisan optimize
+            $REMOTE_PHP please stache:refresh
+            $REMOTE_PHP artisan up"

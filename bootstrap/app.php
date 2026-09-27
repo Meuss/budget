@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Unauthenticated visitors to the /budget app are sent to the Statamic CP login.
         $middleware->redirectGuestsTo('/cp');
+        $middleware->append(\App\Http\Middleware\NoIndex::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
