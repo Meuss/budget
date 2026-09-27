@@ -57,6 +57,17 @@ jobs:
       - name: Build release
         run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress
 
+      # rsync --delete below: refuse to run against anything but an Infomaniak site folder
+      # (guards against an empty or mistyped secret).
+      - name: Check deploy target
+        run: |
+          case "$SITE_PATH" in
+            /home/clients/*/sites/?*) ;;
+            *) echo "::error::INFOMANIAK_SITE_PATH is not an Infomaniak site folder"; exit 1 ;;
+          esac
+          [ -n "${{ secrets.INFOMANIAK_SSH_HOST }}" ] && [ -n "${{ secrets.INFOMANIAK_SSH_USER }}" ] \
+            || { echo "::error::INFOMANIAK_SSH_HOST / INFOMANIAK_SSH_USER not set"; exit 1; }
+
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh && chmod 700 ~/.ssh

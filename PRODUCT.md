@@ -24,7 +24,7 @@ It's a private, self-hosted tool built around the owner's own bank exports (UBS 
 - **Classification:** auto-rules (case-insensitive substrings on merchant/description) run first. The owner then filters and bulk-assigns the rest on `/budget/transactions`. Manual classifications are never overwritten by auto-rules.
 - **Review:** the dashboard (`/budget`) shows income, spending, savings, savings rate and the unallocated amount for a chosen year or all time, plus spending-by-category, monthly income/spending/savings and Sankey charts.
 - **Category and rule management** happens in the Statamic control panel (`/cp/collections/categories`), not in the app.
-- Production (budget.example.com) is the source of truth for data (see `docs/adr/0001-production-is-source-of-truth.md`).
+- Production is the source of truth for data (see `docs/adr/0001-production-is-source-of-truth.md`).
 
 ## Capabilities and Constraints
 

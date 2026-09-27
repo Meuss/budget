@@ -40,11 +40,42 @@ login (`/cp`); the app lives at `/budget`.
 
 ![Transactions — filter, bulk-assign, and auto/manual classification (synthetic data)](screenshot-2.png)
 
-## Deployment
+## Bank exports (UBS)
 
-Production lives at https://budget.example.com (Infomaniak). Pushing to `master` tests and
-deploys automatically via GitHub Actions. The CP login requires two-factor authentication. See
-[docs/deployment.md](docs/deployment.md).
+The importer auto-detects which of the two UBS CSV exports a file is, so both can be dropped in
+together:
+
+| | Account statement | Credit-card statement |
+| --- | --- | --- |
+| Parser | `app/Services/UbsCsvParser.php` | `app/Services/CreditCardCsvParser.php` |
+| Encoding | UTF-8 with BOM | Windows-1252 (converted to UTF-8) |
+| Start | account metadata block, data after the `Date de transaction` header row | `sep=;` hint, then the header row |
+| Delimiter | `;` (quoted fields may contain `;`) | `;` |
+| Dates | `YYYY-MM-DD` | `DD.MM.YYYY` (purchase date + booking date) |
+| Amounts | signed `Débit` / `Crédit` columns, running `Solde` | unsigned CHF `Débit` / `Crédit`; foreign rows keep the original currency and rate in the raw row |
+| Dedupe key | `No de transaction` | none in the export: a stable hash of the row (identical same-day rows are kept, numbered) |
+| Skipped | lines without a transaction number | pending authorisations (no Débit/Crédit) and the footer totals |
+
+Merchant text (`Description1` / `Texte comptable`) is what auto-match terms are compared against.
+The real exports belong in `storage/app/imports/`, which is git-ignored; the tests use small
+synthetic exports.
+
+## CI & deployment
+
+A single GitHub Actions workflow (`.github/workflows/deploy.yml`) runs on every push to `master`
+(or by hand):
+
+1. **Test**: PHP 8.5, `composer install`, `php artisan test` against in-memory SQLite.
+2. **Deploy** (only if the tests pass, in the `production` environment), to shared hosting over SSH:
+   `composer install --no-dev` on the runner → `artisan down` → `rsync --delete` of the code →
+   `migrate --force` → `optimize` → `please stache:refresh` → `artisan up`.
+
+Server-owned state is never overwritten: `.env`, `users/` (the admin login), `storage/`. Production
+is the source of truth for data, so deploys ship code and migrations only
+([ADR 0001](docs/adr/0001-production-is-source-of-truth.md)). The SSH key, host, user,
+`known_hosts` and site path come from repository secrets, and the deploy refuses to run if the
+site path doesn't look like a site folder. The CP login requires two-factor authentication.
+Details, secrets and recovery: [docs/deployment.md](docs/deployment.md).
 
 ## Tests
 

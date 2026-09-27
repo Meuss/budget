@@ -1,6 +1,6 @@
 # Deployment
 
-Production runs at **https://budget.example.com** on Infomaniak shared hosting. Every push to
+Production runs on Infomaniak shared hosting. Every push to
 `master` runs the tests and, if they pass, deploys (`.github/workflows/deploy.yml`). A deploy can also
 be re-run by hand from the Actions tab ("Run workflow").
 
@@ -32,19 +32,19 @@ If a deploy fails mid-way the site stays in maintenance mode on purpose: fix and
 | `INFOMANIAK_SSH_HOST` | `xxxx.ftp.infomaniak.com` |
 | `INFOMANIAK_SSH_USER` | the FTP/SSH account |
 | `INFOMANIAK_KNOWN_HOSTS` | `ssh-keyscan <host>` output |
-| `INFOMANIAK_SITE_PATH` | absolute site folder, e.g. `/home/clients/<hash>/sites/budget.example.com` |
+| `INFOMANIAK_SITE_PATH` | absolute site folder, e.g. `/home/clients/<hash>/sites/<domain>` (the deploy refuses anything else) |
 
 ### Deploy key
 
 `~/.ssh/budget-infomaniak-github-deploy` (ed25519, no passphrase) exists only to let GitHub Actions
 deploy this app. Its public half is in the server's `~/.ssh/authorized_keys`, with the comment
-`github-actions deploy: Meuss/budget -> budget.example.com (Infomaniak)`. To rotate: generate a
+`github-actions deploy: Meuss/budget -> <domain> (Infomaniak)`. To rotate: generate a
 new key, replace the line in `authorized_keys`, and
 `gh secret set INFOMANIAK_SSH_KEY < ~/.ssh/<new key>`.
 
 ## First-time setup (done once)
 
-1. Infomaniak Manager: add the site `budget.example.com` with its folder pointing at
+1. Infomaniak Manager: add the site (your domain) with its folder pointing at
    `<site path>/public`, PHP 8.5, Let's Encrypt; create a database + user; create an SSH account.
 2. Import the local database into the new (empty) database with phpMyAdmin — **before** the first
    deploy, so the first `migrate --force` has nothing to do.

@@ -1,6 +1,6 @@
 # Production is the source of truth for budget data
 
-The production database (budget.example.com, Infomaniak) was seeded once from the local database by a manual phpMyAdmin import. From then on, production owns the data: CSV imports and classifications happen on the live site, deploys ship code and migrations only, and data only ever flows production → local (via `scripts/pull-production.sh`), never local → production. Overwriting production on each deploy was rejected because it would silently discard anything imported or classified online.
+The production database (Infomaniak) was seeded once from the local database by a manual phpMyAdmin import. From then on, production owns the data: CSV imports and classifications happen on the live site, deploys ship code and migrations only, and data only ever flows production → local (via `scripts/pull-production.sh`), never local → production. Overwriting production on each deploy was rejected because it would silently discard anything imported or classified online.
 
 ## Consequences
 

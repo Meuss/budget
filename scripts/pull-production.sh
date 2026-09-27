@@ -2,7 +2,7 @@
 # Replace the LOCAL database with a copy of production (production is the source of truth,
 # see docs/adr/0001). Needs your own SSH access to Infomaniak; set in your local .env:
 #   PRODUCTION_SSH=user@xxxx.ftp.infomaniak.com   (or an ~/.ssh/config alias)
-#   PRODUCTION_PATH=/home/clients/<hash>/sites/budget.example.com
+#   PRODUCTION_PATH=/home/clients/<hash>/sites/<domain>
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
