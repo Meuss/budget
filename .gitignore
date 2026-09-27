@@ -35,3 +35,6 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+# Impeccable working files (review captures, decision-page data)
+/.impeccable/review/
+/.impeccable/decision/

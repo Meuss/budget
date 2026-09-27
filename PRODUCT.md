@@ -43,7 +43,6 @@ It's a private, self-hosted tool built around the owner's own bank exports (UBS 
 ## Evidence on Hand
 
 - `screenshot.png` (dashboard) and `screenshot-2.png` (transactions) show the current UI with amounts masked.
-- `public/assets/vitaly-taranov-OCrPJce6GPk-unsplash.jpg` (Vitaly Taranov, Unsplash) is meant as the Statamic CP login background; it is not part of the /budget front-end.
 - **Figures are private.** Real amounts, merchants and transaction numbers must never appear in screenshots, demos, docs or committed fixtures. Mask them (`XXX`) or use synthetic data, as the CSV import test does.
 
 ## Product Principles
