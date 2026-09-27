@@ -321,6 +321,47 @@ class BudgetTest extends TestCase
             ->assertViewHas('matchCount', 2);  // -42.50 and -77
     }
 
+    public function test_branch_filter_includes_sub_categories_and_savings_filter_uses_flag(): void
+    {
+        $this->authUser();
+        $this->seedTransactions();
+        $courses = $this->categoryIdByTitle('Courses');
+        Transaction::where('transaction_no', 'T1')->update(['category_id' => $courses]);
+        Transaction::where('transaction_no', 'T2')->update(['is_savings' => true]);
+
+        Livewire::test(Transactions::class)
+            ->set('branch', $this->categoryIdByTitle('Alimentation'))
+            ->assertViewHas('matchCount', 1)          // T1 sits in Courses, under Alimentation
+            ->assertViewHas('branchTitle', 'Alimentation')
+            ->call('clearBranch')
+            ->set('category', 'savings')
+            ->assertViewHas('matchCount', 1)          // T2
+            ->set('category', 'all')
+            ->set('month', '2024-05')
+            ->assertViewHas('matchCount', 3)          // T1, T2, T3 (T4 is in June)
+            ->assertViewHas('monthTitle', 'Mai 2024');
+    }
+
+    public function test_dashboard_figures_link_to_their_transactions(): void
+    {
+        $this->authUser();
+        $this->seedTransactions();
+        Transaction::where('transaction_no', 'T1')->update(['category_id' => $this->categoryIdByTitle('Courses')]);
+
+        $spending = app(\App\Services\BudgetReport::class)->spendingOption('2024-01-01', '2024-12-31');
+        $hrefs = array_column($spending['series'][0]['data'], 'href');
+
+        $this->assertContains(route('budget.transactions', [
+            'branch' => $this->categoryIdByTitle('Alimentation'), 'direction' => 'debit', 'year' => '2024',
+        ]), $hrefs);
+        $this->assertContains(route('budget.transactions', [
+            'category' => 'unclassified', 'direction' => 'debit', 'year' => '2024',
+        ]), $hrefs);
+
+        $nodes = collect(app(\App\Services\BudgetReport::class)->sankeyOption('2024-01-01', '2024-12-31')['series'][0]['data'])->keyBy('name');
+        $this->assertSame(route('budget.transactions', ['year' => '2024']), $nodes['Non alloué']['href']);
+    }
+
     public function test_match_term_works_with_displayed_separator(): void
     {
         // A category whose term was copied from the table (uses " · " not ";").

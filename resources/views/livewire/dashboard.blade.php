@@ -1,53 +1,53 @@
 <div>
-    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+    <div class="head">
         <div>
             <h1>Tableau de bord</h1>
             <p class="sub">Où va votre argent — et combien vous gardez.</p>
         </div>
-        <div class="seg" wire:key="period-seg">
-            <button class="{{ $period === 'all' ? 'active' : '' }}" wire:click="$set('period', 'all')">Tout</button>
+        <div class="seg" wire:key="period-seg" role="tablist" aria-label="Période">
+            <button role="tab" aria-selected="{{ $period === 'all' ? 'true' : 'false' }}" class="{{ $period === 'all' ? 'active' : '' }}" wire:click="$set('period', 'all')">Tout</button>
             @foreach ($years as $y)
-                <button class="{{ $period === $y ? 'active' : '' }}" wire:click="$set('period', '{{ $y }}')">{{ $y }}</button>
+                <button role="tab" aria-selected="{{ $period === $y ? 'true' : 'false' }}" class="{{ $period === $y ? 'active' : '' }}" wire:click="$set('period', '{{ $y }}')">{{ $y }}</button>
             @endforeach
         </div>
     </div>
 
-    <div class="grid cards">
-        <div class="card">
-            <div class="label">Revenus</div>
-            <div class="value green">{{ number_format($kpis['income'], 0, ',', ' ') }} <span class="small muted">CHF</span></div>
-        </div>
-        <div class="card">
-            <div class="label">Dépenses</div>
-            <div class="value red">{{ number_format($kpis['spending'], 0, ',', ' ') }} <span class="small muted">CHF</span></div>
-        </div>
-        <div class="card">
-            <div class="label">Épargne</div>
-            <div class="value blue">{{ number_format($kpis['savings'], 0, ',', ' ') }} <span class="small muted">CHF</span></div>
-        </div>
-        <div class="card">
-            <div class="label">Taux d'épargne</div>
-            <div class="value amber">{{ number_format($kpis['rate'], 1, ',', ' ') }}<span class="small muted">%</span></div>
-        </div>
-        <div class="card">
-            <div class="label">Non alloué</div>
-            <div class="value">{{ number_format($kpis['net'], 0, ',', ' ') }} <span class="small muted">CHF</span></div>
-        </div>
+    @php
+        $notes = [
+            ['key' => 'income', 'label' => 'Revenus', 'color' => '--income', 'unit' => 'CHF', 'dec' => 0, 'href' => $links['income']],
+            ['key' => 'spending', 'label' => 'Dépenses', 'color' => '--spending', 'unit' => 'CHF', 'dec' => 0, 'href' => $links['spending']],
+            ['key' => 'savings', 'label' => 'Épargne', 'color' => '--savings', 'unit' => 'CHF', 'dec' => 0, 'href' => $links['savings']],
+            ['key' => 'rate', 'label' => "Taux d'épargne", 'color' => '--savings', 'unit' => '%', 'dec' => 1, 'href' => $links['rate']],
+            ['key' => 'net', 'label' => 'Non alloué', 'color' => '--copper', 'unit' => 'CHF', 'dec' => 0, 'href' => $links['net']],
+        ];
+    @endphp
+    <div class="grid notes">
+        @foreach ($notes as $n)
+            @php $tag = $n['href'] ? 'a' : 'div'; @endphp
+            <{{ $tag }} class="note" style="--note: var({{ $n['color'] }})" wire:key="note-{{ $n['key'] }}-{{ $period }}"
+                @if ($n['href']) href="{{ $n['href'] }}" wire:navigate title="Voir les transactions" @endif>
+                <span class="label caps">
+                    {{ $n['label'] }}
+                    @if ($n['href']) <x-icon name="arrow-right" size="14" class="go" /> @endif
+                </span>
+                <span class="value"><span x-data="roll({{ (float) $kpis[$n['key']] }}, {{ $n['dec'] }}, '{{ $n['key'] }}')">{{ number_format($kpis[$n['key']], $n['dec'], ',', ' ') }}</span><span class="unit caps">{{ $n['unit'] }}</span></span>
+            </{{ $tag }}>
+        @endforeach
     </div>
 
     <div class="grid two-col" style="margin-bottom:16px;">
-        <div class="panel">
-            <h2>Dépenses par catégorie</h2>
-            <div class="chart" style="height:340px" wire:ignore x-data="echart(@js($pie), 'pie')"></div>
-        </div>
-        <div class="panel">
-            <h2>Revenus · dépenses · épargne par mois</h2>
-            <div class="chart" style="height:340px" wire:ignore x-data="echart(@js($bar), 'bar')"></div>
-        </div>
+        <section class="panel">
+            <h2 class="caps">Dépenses par catégorie <span class="hint">cliquez pour voir le détail</span></h2>
+            <div class="chart" style="height:{{ max(120, count($spending['yAxis'][0]['data']) * 40 + 8) }}px" wire:ignore x-data="echart(@js($spending), 'spending')"></div>
+        </section>
+        <section class="panel">
+            <h2 class="caps">Revenus · dépenses · épargne par mois</h2>
+            <div class="chart" style="height:360px" wire:ignore x-data="echart(@js($bar), 'bar')"></div>
+        </section>
     </div>
 
-    <div class="panel">
-        <h2>Flux d'argent (revenus → catégories → sous-catégories)</h2>
-        <div class="chart" style="height:480px" wire:ignore x-data="echart(@js($sankey), 'sankey')"></div>
-    </div>
+    <section class="panel">
+        <h2 class="caps">Flux d'argent (revenus → catégories → sous-catégories)</h2>
+        <div class="chart" style="height:520px" wire:ignore x-data="echart(@js($sankey), 'sankey')"></div>
+    </section>
 </div>

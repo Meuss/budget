@@ -1,0 +1,493 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-27T15:29:02+00:00",
+  "title": "Design System: Budget Épargne",
+  "extensions": {
+    "colorMeta": {
+      "vault": {
+        "role": "neutral",
+        "displayName": "Vault",
+        "canonical": "#121214",
+        "oklch": "oklch(18.3% 0.004 286)",
+        "tonalRamp": [
+          "#0b0b0d",
+          "#242426",
+          "#3f3f42",
+          "#5d5d60",
+          "#7d7d80",
+          "#9e9ea1",
+          "#c4c4c7",
+          "#eeeef1"
+        ],
+        "cssVar": "--vault",
+        "source": "--vault"
+      },
+      "vault-panel": {
+        "role": "neutral",
+        "displayName": "Vault Panel",
+        "canonical": "#18181b",
+        "oklch": "oklch(21.0% 0.006 286)",
+        "tonalRamp": [
+          "#0b0b0e",
+          "#242427",
+          "#3f3f43",
+          "#5d5d61",
+          "#7d7d81",
+          "#9e9ea2",
+          "#c3c4c8",
+          "#eeeef2"
+        ],
+        "source": "--vault-2"
+      },
+      "vault-raised": {
+        "role": "neutral",
+        "displayName": "Vault Raised",
+        "canonical": "#222226",
+        "oklch": "oklch(25.4% 0.007 286)",
+        "tonalRamp": [
+          "#0b0b0e",
+          "#242428",
+          "#3f3f44",
+          "#5d5d62",
+          "#7d7d82",
+          "#9e9ea3",
+          "#c3c3c9",
+          "#eeeef3"
+        ],
+        "source": "--vault-3"
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#2a2a30",
+        "oklch": "oklch(28.7% 0.011 286)",
+        "tonalRamp": [
+          "#0b0b10",
+          "#232329",
+          "#3f3f45",
+          "#5d5d64",
+          "#7c7c84",
+          "#9d9ea5",
+          "#c3c3cb",
+          "#edeef6"
+        ],
+        "source": "--rule"
+      },
+      "rule-control": {
+        "role": "neutral",
+        "displayName": "Control Rule",
+        "canonical": "#3b3b43",
+        "oklch": "oklch(35.5% 0.014 286)",
+        "tonalRamp": [
+          "#0a0a11",
+          "#23232b",
+          "#3f3f47",
+          "#5d5d65",
+          "#7c7c85",
+          "#9d9da7",
+          "#c3c3cd",
+          "#ededf8"
+        ],
+        "source": "--rule-2"
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Note Paper",
+        "canonical": "#ece6d8",
+        "oklch": "oklch(92.6% 0.020 88)",
+        "tonalRamp": [
+          "#0f0b03",
+          "#282419",
+          "#443f34",
+          "#625d51",
+          "#827d70",
+          "#a49e91",
+          "#c9c4b6",
+          "#f4eee0"
+        ],
+        "source": "--paper"
+      },
+      "paper-secondary": {
+        "role": "neutral",
+        "displayName": "Paper Secondary",
+        "canonical": "#aca698",
+        "oklch": "oklch(72.6% 0.021 88)",
+        "tonalRamp": [
+          "#0f0b03",
+          "#282418",
+          "#443f33",
+          "#635d50",
+          "#827d6f",
+          "#a49e90",
+          "#cac4b5",
+          "#f4eedf"
+        ],
+        "source": "--paper-2"
+      },
+      "paper-quiet": {
+        "role": "neutral",
+        "displayName": "Paper Quiet",
+        "canonical": "#9a9488",
+        "oklch": "oklch(66.8% 0.019 85)",
+        "tonalRamp": [
+          "#0f0b04",
+          "#28231a",
+          "#443f35",
+          "#635d52",
+          "#827d71",
+          "#a49e92",
+          "#cac3b7",
+          "#f4eee1"
+        ],
+        "source": "--paper-3"
+      },
+      "income-green": {
+        "role": "secondary",
+        "displayName": "Fifty-Franc Green",
+        "canonical": "#3aa384",
+        "oklch": "oklch(64.7% 0.107 170)",
+        "tonalRamp": [
+          "#010f09",
+          "#052b20",
+          "#034c3a",
+          "#0b6e55",
+          "#229173",
+          "#4db494",
+          "#76dbb9",
+          "#beffe7"
+        ],
+        "source": "--income"
+      },
+      "spending-red": {
+        "role": "secondary",
+        "displayName": "Twenty-Franc Red",
+        "canonical": "#e2573f",
+        "oklch": "oklch(63.6% 0.178 32)",
+        "tonalRamp": [
+          "#1e0100",
+          "#490600",
+          "#781202",
+          "#ab1f05",
+          "#d24831",
+          "#f96c53",
+          "#fdad9c",
+          "#fee9e5"
+        ],
+        "source": "--spending"
+      },
+      "spending-red-deep": {
+        "role": "secondary",
+        "displayName": "Twenty Deep",
+        "canonical": "#b8493a",
+        "oklch": "oklch(55.1% 0.147 30)",
+        "tonalRamp": [
+          "#1f0000",
+          "#4a0301",
+          "#7b0700",
+          "#a03325",
+          "#c55545",
+          "#eb7766",
+          "#fdad9f",
+          "#fde9e6"
+        ],
+        "source": "BudgetReport::SPENDING_SUB"
+      },
+      "savings-blue": {
+        "role": "secondary",
+        "displayName": "Hundred-Franc Blue",
+        "canonical": "#5b8fe0",
+        "oklch": "oklch(65.0% 0.134 259)",
+        "tonalRamp": [
+          "#000923",
+          "#012053",
+          "#073b85",
+          "#2a5ba8",
+          "#497ccc",
+          "#6a9ff1",
+          "#a1c6fe",
+          "#e7effc"
+        ],
+        "source": "--savings"
+      },
+      "unallocated-copper": {
+        "role": "tertiary",
+        "displayName": "Two-Hundred Copper",
+        "canonical": "#b8794a",
+        "oklch": "oklch(63.2% 0.101 56)",
+        "tonalRamp": [
+          "#160700",
+          "#391b02",
+          "#613206",
+          "#884d1b",
+          "#aa6c3d",
+          "#ce8e5e",
+          "#f7b383",
+          "#fdebde"
+        ],
+        "source": "--copper"
+      },
+      "act-yellow": {
+        "role": "primary",
+        "displayName": "Ten-Franc Yellow",
+        "canonical": "#e9b949",
+        "oklch": "oklch(80.9% 0.138 85)",
+        "tonalRamp": [
+          "#100a01",
+          "#302200",
+          "#513c05",
+          "#775801",
+          "#9d770c",
+          "#c59618",
+          "#edbd4d",
+          "#ffedc7"
+        ],
+        "source": "--act"
+      },
+      "act-ink": {
+        "role": "primary",
+        "displayName": "Act Ink",
+        "canonical": "#1d1706",
+        "oklch": "oklch(20.7% 0.031 91)",
+        "tonalRamp": [
+          "#100a00",
+          "#2a2312",
+          "#463f2d",
+          "#645d4a",
+          "#847d68",
+          "#a69e89",
+          "#ccc4ae",
+          "#f6eed7"
+        ],
+        "source": "--act-ink"
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "One page title per view; 26px under 720px."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "Headline numerals in denomination fields, coloured by note; 28px under 720px. Rolls on period change."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Base text, tabular numerals."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Condensed tracked caps: panel heads, field labels, table heads, units."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Dates, compact buttons, chips, metadata."
+      },
+      "microtext": {
+        "displayName": "Microtext",
+        "purpose": "Security strips only: 600, 5.5px/7px, 0.32em tracking, condensed caps, aria-hidden."
+      }
+    },
+    "shadows": [
+      {
+        "name": "focus-halo",
+        "value": "0 0 0 3px color-mix(in oklab, var(--act) 22%, transparent)",
+        "purpose": "Input focus state only. The system has no elevation shadows."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state",
+        "value": ".15s ease-out",
+        "purpose": "Colour, border and fill changes on controls, nav and tabs."
+      },
+      {
+        "name": "field",
+        "value": ".2s ease-out",
+        "purpose": "Denomination field hover tint and arrow slide-in."
+      },
+      {
+        "name": "row",
+        "value": ".12s ease-out",
+        "purpose": "Table row hover."
+      },
+      {
+        "name": "numeral-roll",
+        "value": "700ms cubic ease-out-quart (1-(1-k)^4)",
+        "purpose": "Headline numerals roll from the previous value on period change."
+      },
+      {
+        "name": "toast",
+        "value": "200ms opacity, 2600ms dwell",
+        "purpose": "Toast fade and auto-dismiss."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "transition: none; no roll",
+        "purpose": "prefers-reduced-motion: reduce disables all transitions and the numeral roll."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact",
+        "value": "720px"
+      },
+      {
+        "name": "single-column",
+        "value": "960px"
+      },
+      {
+        "name": "container",
+        "value": "1240px"
+      }
+    ],
+    "hatch": {
+      "value": "repeating-linear-gradient(118deg, color-mix(in oklab, var(--note) 30%, transparent) 0 1px, transparent 1px 5px)",
+      "purpose": "Intaglio engraving on denomination fields, masked to strengthen toward the right edge; the dropzone uses a paper hatch at 2.5% every 6px."
+    },
+    "chartTheme": {
+      "name": "billet",
+      "renderer": "svg",
+      "notes": "Transparent ground, no axis lines or ticks, split lines rule-coloured dashed [2,4], axis labels paper-quiet 11px, legend roundRect 10x10 gap 18, tooltip vault-raised with rule-control border, no shadow, 5px radius. Series colours from BudgetReport constants; marks carry data.href or series.hrefs for click-through."
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one committing action on a view (import, apply to selection). The only filled yellow control.",
+      "html": "<button class=\"ds-btn ds-btn-primary\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 10.5V3M4.5 6.5 8 3l3.5 3.5M3 10.5v2.5h10v-2.5\"/></svg>Importer</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 6px; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1.3; font-weight: 600; padding: 8px 11px; border-radius: 5px; border: 1px solid #3b3b43; background: #222226; color: #ece6d8; cursor: pointer; transition: border-color .15s ease-out, background-color .15s ease-out; } .ds-btn:focus-visible { outline: 2px solid #e9b949; outline-offset: 2px; } .ds-btn-primary { background: #e9b949; border-color: #e9b949; color: #1d1706; } .ds-btn-primary:hover { background: #f2c85e; border-color: #f2c85e; }"
+    },
+    {
+      "name": "Default Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Secondary actions on the vault.",
+      "html": "<button class=\"ds-btn-default\">Réappliquer les règles</button>",
+      "css": ".ds-btn-default { font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1.3; font-weight: 600; padding: 8px 11px; border-radius: 5px; border: 1px solid #3b3b43; background: #222226; color: #ece6d8; cursor: pointer; transition: border-color .15s ease-out, background-color .15s ease-out; } .ds-btn-default:hover { background: #2b2b31; border-color: #4a4a54; } .ds-btn-default:focus-visible { outline: 2px solid #e9b949; outline-offset: 2px; } .ds-btn-default:disabled { opacity: .42; cursor: not-allowed; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Low-emphasis compact actions in the bulk bar.",
+      "html": "<button class=\"ds-btn-ghost\">Tout désélectionner</button>",
+      "css": ".ds-btn-ghost { font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 12.5px; font-weight: 600; padding: 6px 10px; border-radius: 5px; border: 1px solid transparent; background: transparent; color: #aca698; cursor: pointer; transition: color .15s ease-out, background-color .15s ease-out; } .ds-btn-ghost:hover { color: #ece6d8; background: #222226; } .ds-btn-ghost:focus-visible { outline: 2px solid #e9b949; outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Search and filter fields; focus turns the border yellow with a soft halo.",
+      "html": "<input class=\"ds-input\" type=\"search\" placeholder=\"Rechercher un commerçant…\">",
+      "css": ".ds-input { font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 13px; line-height: 1.3; padding: 8px 11px; border-radius: 5px; border: 1px solid #3b3b43; background: #222226; color: #ece6d8; min-width: 240px; transition: border-color .15s ease-out, box-shadow .15s ease-out; } .ds-input::placeholder { color: #9a9488; } .ds-input:hover { border-color: #4a4a54; } .ds-input:focus { outline: none; border-color: #e9b949; box-shadow: 0 0 0 3px rgba(233,185,73,.22); }"
+    },
+    {
+      "name": "Station Nav",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Wordmark and stations; the active station wears a 2px yellow underline. Period tabs reuse the pattern.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-brand\" href=\"#\">Budget<span>Épargne</span></a><a class=\"ds-link ds-active\" href=\"#\">Tableau de bord</a><a class=\"ds-link\" href=\"#\">Transactions</a><a class=\"ds-link\" href=\"#\">Importer</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: stretch; gap: 2px; height: 56px; padding: 0 24px; background: #121214; border-bottom: 1px solid #2a2a30; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 14px; } .ds-brand { display: flex; align-items: center; margin-right: 28px; font-stretch: 118%; font-weight: 750; font-size: 16px; letter-spacing: -.01em; color: #ece6d8; text-decoration: none; } .ds-brand span { color: #5b8fe0; } .ds-link { position: relative; display: flex; align-items: center; padding: 0 12px; color: #aca698; font-weight: 500; text-decoration: none; transition: color .15s ease-out; } .ds-link:hover, .ds-link.ds-active { color: #ece6d8; } .ds-link.ds-active::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: 0; height: 2px; background: #e9b949; border-radius: 2px 2px 0 0; } .ds-link:focus-visible { outline: 2px solid #e9b949; outline-offset: 2px; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Active filter token tinted from its note colour, with a remove control.",
+      "html": "<span class=\"ds-chip\">Alimentation et sous-catégories<button aria-label=\"Retirer ce filtre\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"><path d=\"m4.5 4.5 7 7M11.5 4.5l-7 7\"/></svg></button></span>",
+      "css": ".ds-chip { --note: #e2573f; display: inline-flex; align-items: center; gap: 6px; padding: 5px 6px 5px 10px; border-radius: 5px; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 12.5px; font-weight: 600; color: #ece6d8; background: color-mix(in oklab, var(--note) 12%, #18181b); border: 1px solid color-mix(in oklab, var(--note) 40%, #121214); } .ds-chip button { display: flex; padding: 2px; border: 0; border-radius: 3px; background: none; color: inherit; cursor: pointer; } .ds-chip button:hover { background: rgba(255,255,255,.08); }"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Flat container with a caps head and a microtext security line beneath it.",
+      "html": "<section class=\"ds-panel\"><h2>Dépenses par catégorie <span>cliquez pour voir le détail</span></h2><p>Contenu du panneau.</p></section>",
+      "css": ".ds-panel { background: #18181b; border: 1px solid #2a2a30; border-radius: 5px; padding: 18px 20px 20px; color: #ece6d8; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 14px; } .ds-panel h2 { position: relative; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0 0 22px; font-size: 12px; font-weight: 600; font-stretch: 78%; letter-spacing: .09em; text-transform: uppercase; } .ds-panel h2 span { font-size: 12px; font-weight: 500; letter-spacing: 0; text-transform: none; font-stretch: 100%; color: #9a9488; } .ds-panel h2::after { content: 'Budget Épargne · Franc suisse · Revenus · Dépenses · Épargne · Budget Épargne · Franc suisse · Revenus · Dépenses · Épargne · Budget Épargne · Franc suisse'; position: absolute; left: 0; right: 0; bottom: -12px; height: 7px; overflow: hidden; white-space: nowrap; font-size: 5.5px; line-height: 7px; letter-spacing: .32em; color: #3a3a41; border-top: 1px solid #2a2a30; padding-top: 1px; } .ds-panel p { margin: 0; color: #aca698; }"
+    },
+    {
+      "name": "Denomination Field",
+      "kind": "custom",
+      "refersTo": "denomination-field",
+      "description": "Signature KPI field tinted by its note colour with a masked intaglio hatch; links to its transactions.",
+      "html": "<a class=\"ds-note\" href=\"#\" style=\"--note: #5b8fe0\"><span class=\"ds-note-label\">Épargne <svg class=\"ds-go\" width=\"14\" height=\"14\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 8h10M9 4l4 4-4 4\"/></svg></span><span class=\"ds-note-value\">XX XXX<span>CHF</span></span></a>",
+      "css": ".ds-note { --note: #aca698; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 14px; width: 220px; padding: 16px 18px 18px; border-radius: 5px; text-decoration: none; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; background: color-mix(in oklab, var(--note) 9%, #121214); border: 1px solid color-mix(in oklab, var(--note) 26%, #121214); transition: border-color .2s ease-out, background-color .2s ease-out; } .ds-note::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(118deg, color-mix(in oklab, var(--note) 30%, transparent) 0 1px, transparent 1px 5px); -webkit-mask-image: linear-gradient(90deg, transparent 35%, #000 100%); mask-image: linear-gradient(90deg, transparent 35%, #000 100%); opacity: .55; } .ds-note > * { position: relative; } .ds-note-label { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; font-stretch: 78%; letter-spacing: .09em; text-transform: uppercase; color: color-mix(in oklab, var(--note) 45%, #ece6d8); } .ds-note-value { font-stretch: 118%; font-weight: 700; font-size: 32px; line-height: 1; letter-spacing: -.02em; color: var(--note); white-space: nowrap; font-variant-numeric: tabular-nums; } .ds-note-value span { margin-left: 6px; font-size: 12px; font-stretch: 78%; letter-spacing: .09em; color: color-mix(in oklab, var(--note) 55%, #9a9488); } .ds-go { opacity: 0; transform: translateX(-4px); transition: opacity .2s ease-out, transform .2s ease-out; } .ds-note:hover { border-color: color-mix(in oklab, var(--note) 60%, #121214); background: color-mix(in oklab, var(--note) 13%, #121214); } .ds-note:hover .ds-go, .ds-note:focus-visible .ds-go { opacity: 1; transform: none; } .ds-note:focus-visible { outline: 2px solid #e9b949; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ledger Amounts",
+      "kind": "custom",
+      "refersTo": "ledger-table",
+      "description": "Transaction rows: hairline rules, amounts coloured by money role, savings blue, transfers muted.",
+      "html": "<table class=\"ds-ledger\"><tbody><tr><td>27.06.2026</td><td>Commerçant XXX</td><td class=\"ds-amt ds-neg\">-XX,XX</td></tr><tr><td>25.06.2026</td><td>Salaire XXX</td><td class=\"ds-amt ds-pos\">X XXX,XX</td></tr><tr><td>25.06.2026</td><td>Virement épargne</td><td class=\"ds-amt ds-kept\">-X XXX,XX</td></tr><tr><td>24.06.2026</td><td>Transfert interne</td><td class=\"ds-amt ds-muted\">-XXX,XX</td></tr></tbody></table>",
+      "css": ".ds-ledger { width: 100%; border-collapse: collapse; font-family: Archivo, ui-sans-serif, system-ui, sans-serif; font-size: 14px; color: #ece6d8; background: #18181b; font-variant-numeric: tabular-nums; } .ds-ledger td { padding: 10px 12px; border-bottom: 1px solid #2a2a30; } .ds-ledger tr:last-child td { border-bottom: 0; } .ds-ledger tr:hover td { background: #1c1c20; } .ds-amt { text-align: right; white-space: nowrap; font-stretch: 118%; font-weight: 600; } .ds-neg { color: #e2573f; } .ds-pos { color: #3aa384; } .ds-kept { color: #5b8fe0; } .ds-muted { color: #aca698; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Billet de banque",
+    "overview": "**Creative North Star: \"Billet de banque\"**\n\nEvery money role is printed as one of the Swiss ninth-series franc notes: the 50 green for money in, the 20 red for money out, the 100 blue for money kept, the 200 copper for what is left on the account, and the 10 yellow for whatever you can act on. The notes sit on a dark vault ground and are drawn in note-paper ink, with fine intaglio line work, hairline rules, and microtext security strips instead of cards, shadows and gradients. The figures carry the weight: wide, bold tabular numerals, with small print set in condensed tracked caps.\n\nThe system is dense, desktop-first and dark-only. It was chosen for the use scene: occasional evening sessions in a dim room, one person at a desk (`color-scheme: dark`, and no light theme). Every figure is cashable: a KPI field, a bar or a Sankey node opens the filtered transactions behind it. Headline numerals roll to their new value when the period changes.\n\nIt rejects the generic navy-card dashboard with an indigo accent, and it rejects decorative colour. A hue always stands for a money role.",
+    "keyCharacteristics": [
+      "Dark vault ground with three tonal steps and hairline rules. No shadows.",
+      "Five note colours bound to money roles across charts, KPI fields and transaction amounts.",
+      "Yellow is reserved for actionable things: active station, primary button, focus, unclassified to-dos.",
+      "Archivo variable, used at two widths: wide (118%) for numerals and titles, condensed (78%) for tracked caps.",
+      "Intaglio hatch on denomination fields and microtext strips under the nav and every panel head.",
+      "Figures are links, and numerals roll on period change (700ms, ease-out quart, disabled under reduced motion)."
+    ],
+    "rules": [
+      {
+        "name": "The Denomination Rule",
+        "body": "Colour is bound to money role everywhere: charts, KPI fields, transaction amounts and toggles. Savings rows read blue even though they are debits, and transfers read muted paper because they are neither income nor spending. Do not use a note colour for decoration or to mean anything else.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ten-Franc Rule",
+        "body": "Yellow means \"you can act here\". It goes on the active station, the primary action, focus, and unclassified to-dos, and never on a figure that is simply informational.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tint-From-The-Note Rule",
+        "body": "Role surfaces are mixed from their note colour into the vault in OKLab. For example, fills use 9% (13% on hover), borders use 26% (60% on hover), and labels mix 45% note into paper. Do not introduce a separate hex for a tinted state.",
+        "section": "colors"
+      },
+      {
+        "name": "The Verified Palette Rule",
+        "body": "The green, red and blue chart trio (income-green, spending-red, savings-blue) was checked for colour-vision deficiency on the dark surface (deutan ΔE 9.6). Any substitute must pass the same check on the vault before it ships.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Widths Rule",
+        "body": "Numerals, titles, tab labels and amounts are set wide (118%). Small print is set condensed (78%) in tracked caps. Body text stays at normal width.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "All numbers use tabular figures, set right-aligned in tables, with Swiss formatting (space-grouped thousands, comma decimals, CHF after the figure).",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline Rule",
+        "body": "Separate surfaces with a 1px rule or a tonal step, never with a shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** bind every hue to a money role: income-green in, spending-red out, savings-blue kept, unallocated-copper left over, act-yellow actionable.",
+      "**Do** make every figure cashable. A new KPI, bar or node that stands for a set of transactions links to that filtered set.",
+      "**Do** mix tinted states from the note colour into the vault with `color-mix(in oklab, …)`.",
+      "**Do** set figures wide (118%) and bold with tabular numerals, and small print as condensed (78%) tracked caps.",
+      "**Do** separate surfaces with hairlines and tonal steps, and keep one 5px radius.",
+      "**Do** draw new icons on the 16px, 1.6-stroke grid.",
+      "**Do** honour `prefers-reduced-motion`: no transitions and no numeral roll."
+    ],
+    "donts": [
+      "**Don't** add shadows, glows or gradients for depth. Tooltips and the toast stay flat.",
+      "**Don't** use act-yellow for decoration or for informational figures. It is only for what you can act on.",
+      "**Don't** use a note colour outside its money role, and don't introduce an extra accent (no indigo, no navy cards).",
+      "**Don't** add a light theme. The system is dark-only by design.",
+      "**Don't** ship raster imagery in `/budget`. The world is drawn from type, rule and hatch.",
+      "**Don't** put real amounts, merchants or transaction numbers in screenshots or fixtures. Mask them or use synthetic data."
+    ]
+  }
+}

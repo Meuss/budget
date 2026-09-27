@@ -1,15 +1,23 @@
 <div>
-    <h1>Transactions</h1>
-    <p class="sub">Parcourez, filtrez et classez. Astuce : cochez des lignes (<em>Maj+clic</em> pour sélectionner une plage), puis « Appliquer à la sélection ».</p>
+    <div class="head">
+        <div>
+            <h1>Transactions</h1>
+            <p class="sub">Parcourez, filtrez et classez. Astuce : cochez des lignes (<em>Maj+clic</em> pour sélectionner une plage), puis « Appliquer à la sélection ».</p>
+        </div>
+    </div>
 
     {{-- Filtres --}}
     <div class="filters">
-        <input class="grow" type="search" placeholder="Rechercher commerçant / description…"
-               wire:model.live.debounce.350ms="search">
+        <label class="grow">
+            <x-icon name="search" />
+            <input type="search" placeholder="Rechercher commerçant / description…" aria-label="Rechercher"
+                   wire:model.live.debounce.350ms="search">
+        </label>
 
         <select wire:model.live="category">
             <option value="all">Toutes les catégories</option>
-            <option value="unclassified">⚠ Non classées uniquement</option>
+            <option value="unclassified">Non classées uniquement</option>
+            <option value="savings">Épargne uniquement</option>
             @foreach ($cats as $c)
                 <option value="{{ $c['id'] }}">{!! str_repeat('&nbsp;&nbsp;', $c['depth']) !!}{{ $c['title'] }}</option>
             @endforeach
@@ -34,18 +42,29 @@
         <input type="number" step="0.01" min="0" style="width:120px"
                placeholder="Montant ≤" wire:model.live.debounce.400ms="amountMax"
                title="Montant maximum (valeur absolue, CHF)">
+
+        @if ($branchTitle)
+            <span class="chip">{{ $branchTitle }} et sous-catégories
+                <button wire:click="$set('branch', '')" title="Retirer ce filtre" aria-label="Retirer ce filtre"><x-icon name="close" size="14" /></button>
+            </span>
+        @endif
+        @if ($monthTitle)
+            <span class="chip neutral">{{ $monthTitle }}
+                <button wire:click="$set('month', '')" title="Retirer ce filtre" aria-label="Retirer ce filtre"><x-icon name="close" size="14" /></button>
+            </span>
+        @endif
     </div>
 
     {{-- Barre d'actions --}}
     <div class="bulkbar">
-        <span><strong>{{ number_format($matchCount, 0, ',', ' ') }}</strong> <span class="muted">correspondent au filtre</span></span>
+        <span><span class="count">{{ number_format($matchCount, 0, ',', ' ') }}</span> <span class="muted">correspondent au filtre</span></span>
         @if (count($selected))
-            <span class="muted">·</span>
-            <span><strong>{{ count($selected) }}</strong> <span class="muted">sélectionnée(s)</span></span>
-            <button class="btn sm" wire:click="clearSelection">Tout désélectionner</button>
+            <span class="sep"></span>
+            <span><span class="count">{{ count($selected) }}</span> <span class="muted">sélectionnée(s)</span></span>
+            <button class="btn sm ghost" wire:click="clearSelection">Tout désélectionner</button>
         @elseif ($matchCount > 0)
-            <span class="muted">·</span>
-            <button class="btn sm" wire:click="selectAllMatching">Sélectionner les {{ number_format($matchCount, 0, ',', ' ') }}</button>
+            <span class="sep"></span>
+            <button class="btn sm ghost" wire:click="selectAllMatching">Sélectionner les {{ number_format($matchCount, 0, ',', ' ') }}</button>
         @endif
 
         <span class="spacer" style="flex:1"></span>
@@ -66,7 +85,7 @@
                 wire:confirm="Appliquer cette catégorie aux {{ $matchCount }} transactions correspondant au filtre ?">
             Appliquer à toutes les correspondances
         </button>
-        <button class="btn sm" wire:click="bulkApplyRules"
+        <button class="btn sm ghost" wire:click="bulkApplyRules"
                 wire:confirm="Relancer les règles auto sur les lignes correspondantes (non manuelles) ?">
             Règles auto
         </button>
@@ -77,7 +96,7 @@
         $pageIds = $rows->getCollection()->map(fn ($r) => (string) $r->id)->all();
         $allPageSelected = $pageIds && empty(array_diff($pageIds, $selected));
     @endphp
-    <div class="panel" style="padding:0; overflow:hidden;">
+    <div class="panel table-wrap" style="padding:0;">
         <table>
             <thead>
                 <tr>
@@ -85,12 +104,12 @@
                         <input type="checkbox" wire:click="toggleSelectPage" @checked($allPageSelected)
                                title="Tout sélectionner sur cette page">
                     </th>
-                    <th style="width:90px">Date</th>
-                    <th>Commerçant</th>
-                    <th>Type</th>
-                    <th class="num" style="width:120px">Montant</th>
-                    <th style="width:230px">Catégorie</th>
-                    <th style="width:90px">Épargne</th>
+                    <th class="caps" style="width:96px">Date</th>
+                    <th class="caps">Commerçant</th>
+                    <th class="caps">Type</th>
+                    <th class="caps num" style="width:120px">Montant</th>
+                    <th class="caps" style="width:230px">Catégorie</th>
+                    <th class="caps" style="width:110px">Épargne</th>
                 </tr>
             </thead>
             <tbody x-data="{
@@ -118,19 +137,20 @@
                                    @checked(in_array((string) $row->id, $selected))
                                    @click="toggle($event)">
                         </td>
-                        <td class="small muted">{{ $row->date->format('d.m.Y') }}</td>
+                        <td class="small muted num" style="text-align:left">{{ $row->date->format('d.m.Y') }}</td>
                         <td>
                             <div>{{ \Illuminate\Support\Str::limit(str_replace(';', ' · ', $row->merchant ?? '—'), 48) }}</div>
                             @if ($row->details)
-                                <div class="small muted">{{ \Illuminate\Support\Str::limit($row->details, 60) }}</div>
+                                <div class="small quiet">{{ \Illuminate\Support\Str::limit($row->details, 60) }}</div>
                             @endif
                         </td>
                         <td class="small muted">{{ \Illuminate\Support\Str::limit($row->type ?? '', 22) }}</td>
-                        <td class="num {{ $row->amount < 0 ? 'neg' : 'pos' }}">
+                        {{-- Colour follows the money's role: kept, moved between own accounts, out, or in. --}}
+                        <td class="num amount {{ $row->is_savings ? 'kept' : ($row->is_transfer ? 'muted' : ($row->amount < 0 ? 'neg' : 'pos')) }}">
                             {{ number_format($row->amount, 2, ',', ' ') }}
                         </td>
                         <td>
-                            <select class="cat-select"
+                            <select class="cat-select {{ ! $row->category_id && ! $row->is_savings ? 'todo' : '' }}"
                                     wire:change="assign({{ $row->id }}, $event.target.value)">
                                 <option value="" @selected(! $row->category_id)>—</option>
                                 @foreach ($cats as $c)
@@ -140,33 +160,33 @@
                                 @endforeach
                             </select>
                             @if ($row->source === 'rule')
-                                <span class="small muted" title="Classé automatiquement par une règle">· auto</span>
+                                <span class="mark rule caps" title="Classé automatiquement par une règle">auto</span>
                             @elseif ($row->source === 'manual')
-                                <span class="small muted" title="Défini manuellement">· manuel</span>
+                                <span class="mark manual caps" title="Défini manuellement">manuel</span>
                             @endif
                         </td>
                         <td>
-                            <button class="btn sm {{ $row->is_savings ? 'primary' : '' }}"
-                                    wire:click="toggleSavings({{ $row->id }})">
-                                {{ $row->is_savings ? '✓ Épargne' : 'Marquer' }}
+                            <button class="btn sm {{ $row->is_savings ? 'kept' : 'ghost' }}"
+                                    wire:click="toggleSavings({{ $row->id }})" aria-pressed="{{ $row->is_savings ? 'true' : 'false' }}">
+                                @if ($row->is_savings) <x-icon name="check" size="14" /> Épargne @else Marquer @endif
                             </button>
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="7" class="muted" style="padding:28px; text-align:center;">Aucune transaction ne correspond.</td></tr>
+                    <tr><td colspan="7" class="muted" style="padding:48px 12px; text-align:center;">Aucune transaction ne correspond.</td></tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
     {{-- Pagination --}}
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-top:14px;">
+    <div class="pager">
         <span class="muted small">
             Page {{ $rows->currentPage() }} sur {{ max($rows->lastPage(), 1) }} · {{ number_format($rows->total(), 0, ',', ' ') }} lignes
         </span>
         <div style="display:flex; gap:8px;">
-            <button class="btn sm" wire:click="previousPage" @disabled($rows->onFirstPage())>← Préc.</button>
-            <button class="btn sm" wire:click="nextPage" @disabled(! $rows->hasMorePages())>Suiv. →</button>
+            <button class="btn sm" wire:click="previousPage" @disabled($rows->onFirstPage())><x-icon name="arrow-left" size="14" /> Préc.</button>
+            <button class="btn sm" wire:click="nextPage" @disabled(! $rows->hasMorePages())>Suiv. <x-icon name="arrow-right" size="14" /></button>
         </div>
     </div>
 </div>

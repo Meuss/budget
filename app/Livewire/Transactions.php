@@ -20,10 +20,18 @@ class Transactions extends Component
     public string $search = '';
 
     #[Url]
-    public string $category = 'all';   // 'all' | 'unclassified' | <category id>
+    public string $category = 'all';   // 'all' | 'unclassified' | 'savings' | <category id>
+
+    /** A category plus all its sub-categories (set by the dashboard's click-throughs). */
+    #[Url]
+    public string $branch = '';
 
     #[Url]
     public string $year = 'all';
+
+    /** One calendar month, "YYYY-MM" (set by the dashboard's monthly bars). */
+    #[Url]
+    public string $month = '';
 
     #[Url]
     public string $direction = 'all';  // 'all' | 'debit' | 'credit'
@@ -43,7 +51,7 @@ class Transactions extends Component
 
     public function updating($name): void
     {
-        if (in_array($name, ['search', 'category', 'year', 'direction', 'amountMin', 'amountMax'])) {
+        if (in_array($name, ['search', 'category', 'branch', 'month', 'year', 'direction', 'amountMin', 'amountMax'])) {
             $this->resetPage();
             $this->selected = []; // a new filter means a fresh selection
         }
@@ -60,8 +68,14 @@ class Transactions extends Component
             })
             ->when($this->category === 'unclassified',
                 fn ($q) => $q->whereNull('category_id')->where('is_savings', false))
-            ->when($this->category !== 'all' && $this->category !== 'unclassified',
+            ->when($this->category === 'savings',
+                fn ($q) => $q->where('is_savings', true))
+            ->when(! in_array($this->category, ['all', 'unclassified', 'savings'], true),
                 fn ($q) => $q->where('category_id', $this->category))
+            ->when($this->branch !== '',
+                fn ($q) => $q->whereIn('category_id', app(CategoryService::class)->subtreeIds($this->branch)))
+            ->when(preg_match('/^\d{4}-\d{2}$/', $this->month) === 1,
+                fn ($q) => $q->whereBetween('date', ["{$this->month}-01", date('Y-m-t', strtotime("{$this->month}-01"))]))
             ->when($this->year !== 'all',
                 fn ($q) => $q->whereBetween('date', ["{$this->year}-01-01", "{$this->year}-12-31"]))
             ->when($this->direction !== 'all',
@@ -159,6 +173,13 @@ class Transactions extends Component
             ->pluck('id')->map(fn ($id) => (string) $id)->all();
     }
 
+    public function clearBranch(): void
+    {
+        $this->branch = '';
+        $this->resetPage();
+        $this->selected = [];
+    }
+
     public function clearSelection(): void
     {
         $this->selected = [];
@@ -201,6 +222,10 @@ class Transactions extends Component
             'matchCount' => (clone $this->baseQuery())->count(),
             'cats' => $categories->ordered(),
             'categoryService' => $categories,
+            'branchTitle' => $this->branch !== '' ? $categories->title($this->branch) : null,
+            'monthTitle' => preg_match('/^\d{4}-\d{2}$/', $this->month) === 1
+                ? ucfirst(\Illuminate\Support\Carbon::parse("{$this->month}-01")->locale('fr')->translatedFormat('F Y'))
+                : null,
         ])->title('Transactions · Savings Budget');
     }
 }

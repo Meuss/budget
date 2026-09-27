@@ -94,6 +94,32 @@ class CategoryService
         return $chain;
     }
 
+    /** The category itself plus every category nested under it. */
+    public function subtreeIds(string $id): array
+    {
+        $ids = [$id];
+        foreach ($this->map() as $rowId => $row) {
+            if ($rowId !== $id && in_array($id, $this->ancestorIds($rowId), true)) {
+                $ids[] = $rowId;
+            }
+        }
+
+        return $ids;
+    }
+
+    /** Ancestor ids, nearest parent first. */
+    public function ancestorIds(string $id): array
+    {
+        $rows = $this->map();
+        $out = [];
+        $guard = 0;
+        while (($id = $rows[$id]['parent'] ?? null) && isset($rows[$id]) && $guard++ < 10) {
+            $out[] = $id;
+        }
+
+        return $out;
+    }
+
     public function savingsCategoryId(): ?string
     {
         foreach ($this->map() as $id => $row) {
