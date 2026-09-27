@@ -2,9 +2,10 @@
 
 A personal-finance tool built on **Statamic (Solo) + Laravel + Livewire + MySQL**. Import bank
 CSV exports, classify transactions into a category tree (manually or with auto-rules), and explore
-the data through pie / bar / Sankey charts focused on your savings rate. The UI is in French.
+the data through ranked-bar / monthly-bar / Sankey charts focused on your savings rate. Every
+figure and chart mark opens the transactions behind it. The UI is in French.
 
-![Dashboard — savings rate, spending by category, monthly income vs. spending vs. savings](screenshot.png)
+![Dashboard — savings rate, spending by category, monthly income vs. spending vs. savings (synthetic data)](screenshot.png)
 
 ## Requirements
 
@@ -37,7 +38,7 @@ login (`/cp`); the app lives at `/budget`.
   rows). Manual classifications are never overwritten. Manageable in the CP directly.
 - **Browse & classify** — filter and bulk-assign on the `/budget/transactions` page.
 
-![Transactions — filter, bulk-assign, and auto/manual classification](screenshot-2.png)
+![Transactions — filter, bulk-assign, and auto/manual classification (synthetic data)](screenshot-2.png)
 
 ## Deployment
 
