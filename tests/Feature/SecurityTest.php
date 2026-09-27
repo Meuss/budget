@@ -58,6 +58,26 @@ class SecurityTest extends TestCase
         }
     }
 
+    public function test_cp_dashboard_shows_budget_quick_links(): void
+    {
+        // Locally the real user in users/ plus this one would trip Solo's single-user limit.
+        config(['statamic.editions.pro' => true]);
+        $this->actingAs($this->user(withTwoFactor: true));
+
+        // The widget HTML travels JSON-encoded inside Inertia's page props.
+        $response = $this->get(cp_route('dashboard'))->assertOk();
+        foreach ([route('budget.dashboard'), route('budget.import'), cp_route('collections.show', 'categories')] as $url) {
+            $response->assertSee(str_replace('/', '\\/', $url), false);
+        }
+    }
+
+    public function test_password_reset_is_disabled(): void
+    {
+        $this->get('/cp/auth/password/reset')->assertNotFound();
+        $this->post('/cp/auth/password/email', ['email' => 'sec@example.test'])->assertNotFound();
+        $this->get('/cp/auth/login')->assertOk()->assertSee('/css/cp.css', false);
+    }
+
     public function test_statamic_front_end_is_disabled(): void
     {
         $this->get('/home')->assertNotFound();
