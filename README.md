@@ -1,11 +1,25 @@
 # Budget
 
-A personal-finance tool built on **Statamic (Solo) + Laravel + Livewire + MySQL**. Import bank
-CSV exports, classify transactions into a category tree (manually or with auto-rules), and explore
-the data through ranked-bar / monthly-bar / Sankey charts focused on your savings rate. Every
-figure and chart mark opens the transactions behind it. The UI is in French.
+A personal savings-budget app. Import your bank and credit-card statements, sort every
+transaction into categories (by hand or with auto-match rules), and see where your money goes and
+how much of it you actually save. Every figure and chart links back to the transactions behind it.
+
+It was built for **UBS** CSV exports (formats detailed in [Bank exports](#bank-exports-ubs)), but
+the parsers are small and self-contained, so it can be adapted to any bank's format: fork the repo
+and add a parser for your export, then point `TransactionImporter::parserFor()` at it.
 
 ![Dashboard — savings rate, spending by category, monthly income vs. spending vs. savings (synthetic data)](screenshot.png)
+
+## How it's built
+
+- **Stack:** [Statamic](https://statamic.com) (Solo) on Laravel, Livewire for the UI, MySQL, and
+  Apache ECharts for the ranked-bar, monthly-bar and Sankey charts. The UI is in French.
+- **Core logic** lives in `app/Services`: CSV parsers, importer, classifier and reporting. The pages
+  are Livewire components in `app/Livewire` with their views in `resources/views`.
+- **Categories** are Statamic entries (a nested tree with auto-match terms), stored in the database
+  via [`statamic/eloquent-driver`](https://github.com/statamic/eloquent-driver) and edited in the CP.
+- **Access:** everything sits behind the Statamic control-panel login, with two-factor
+  authentication required.
 
 ## Requirements
 
@@ -74,7 +88,7 @@ Server-owned state is never overwritten: `.env`, `users/` (the admin login), `st
 is the source of truth for data, so deploys ship code and migrations only
 ([ADR 0001](docs/adr/0001-production-is-source-of-truth.md)). The SSH key, host, user,
 `known_hosts` and site path come from repository secrets, and the deploy refuses to run if the
-site path doesn't look like a site folder. The CP login requires two-factor authentication.
+site path doesn't look like a site folder.
 Details, secrets and recovery: [docs/deployment.md](docs/deployment.md).
 
 ## Tests
@@ -82,10 +96,3 @@ Details, secrets and recovery: [docs/deployment.md](docs/deployment.md).
 ```bash
 php artisan test
 ```
-
-## Layout
-
-`app/Services` holds the core logic (CSV parsing, importer, classifier, reporting); `app/Livewire`
-
-- `resources/views` hold the UI. Content (categories, etc.) is stored in the database via
-  [`statamic/eloquent-driver`](https://github.com/statamic/eloquent-driver). Charts use Apache ECharts.
