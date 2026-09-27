@@ -53,7 +53,11 @@ return [
     */
 
     'widgets' => [
-        //
+        [
+            'type' => 'template',
+            'template' => 'widgets.quick-links',
+            'width' => 'full',
+        ],
     ],
 
     /*

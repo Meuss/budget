@@ -1,0 +1,6 @@
+/* Control-panel tweaks, loaded via Statamic::externalStyle() in AppServiceProvider. */
+
+/* No outgoing mail, so password reset can't work: hide the "Mot de passe oublié ?" link. */
+a[href$="/auth/password/reset"] {
+    display: none !important;
+}
