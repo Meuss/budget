@@ -358,8 +358,15 @@ class BudgetTest extends TestCase
 
     public function test_csv_import_is_idempotent(): void
     {
+        // Synthetic UBS export (the real ones in storage/app/imports are private and untracked).
+        $csv = tempnam(sys_get_temp_dir(), 'ubs').'.csv';
+        file_put_contents($csv, "\u{FEFF}Numéro de compte:;0000 00000000.00;\n"
+            ."IBAN:;CH00 0000 0000 0000 0000 0;\n\n"
+            ."Date de transaction;Heure de transaction;Date de comptabilisation;Date de valeur;Monnaie;Débit;Crédit;Sous-montant;Solde;No de transaction;Description1;Description2;Description3;Notes de bas de page;\n"
+            ."2026-01-05;;2026-01-05;2026-01-05;CHF;-42.50;;;1000.00;TX-1;Migros MM;Paiement carte;;;\n"
+            ."2026-01-25;;2026-01-25;2026-01-25;CHF;;5000.00;;6000.00;TX-2;Employer SA;Salaire;;;\n");
+
         $importer = app(TransactionImporter::class);
-        $csv = storage_path('app/imports/transactions-2026-in-progress.csv');
 
         $first = $importer->importFile($csv);
         $this->assertGreaterThan(0, $first['new']);
@@ -367,5 +374,6 @@ class BudgetTest extends TestCase
         $second = $importer->importFile($csv);
         $this->assertSame(0, $second['new']);
         $this->assertSame($first['new'], $second['duplicates']);
+        @unlink($csv);
     }
 }
