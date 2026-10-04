@@ -51,6 +51,7 @@ login (`/cp`); the app lives at `/budget`.
 - **Re-classify** — `php artisan classify:transactions` (unclassified) or `--all` (all non-manual
   rows). Manual classifications are never overwritten. Manageable in the CP directly.
 - **Browse & classify** — filter and bulk-assign on the `/budget/transactions` page.
+- **Patrimoine** — on `/budget/patrimoine`, define your Classes and Avoirs, then enter a dated Relevé of their balances whenever you like (pre-filled from the previous one); the page shows the latest totals and their evolution. See `CONTEXT.md` for the vocabulary.
 
 ![Transactions — filter, bulk-assign, and auto/manual classification (synthetic data)](screenshot-2.png)
 
