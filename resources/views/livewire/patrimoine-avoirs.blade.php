@@ -33,7 +33,7 @@
         <tbody>
         @foreach ($classes as $c)
             <tr wire:key="classe-{{ $c->id }}">
-                <th colspan="3" style="text-align:left">{{ $c->title }} <span class="quiet">{{ $c->description }}</span></th>
+                <th colspan="3" style="text-align:left">{{ $c->title }}<span class="desc">{{ $c->description }}</span></th>
                 <th style="text-align:right; white-space:nowrap">
                     <button class="btn sm ghost" wire:click="moveClasse({{ $c->id }}, -1)" aria-label="Monter">↑</button>
                     <button class="btn sm ghost" wire:click="moveClasse({{ $c->id }}, 1)" aria-label="Descendre">↓</button>
@@ -43,7 +43,7 @@
             </tr>
             @forelse ($c->avoirs as $a)
                 <tr wire:key="avoir-{{ $a->id }}" @class(['quiet' => $a->archived_on])>
-                    <td>{{ $a->title }} <span class="quiet">{{ $a->description }}</span></td>
+                    <td class="indent">{{ $a->title }}<span class="desc">{{ $a->description }}</span></td>
                     <td class="muted">
                         @if ($a->suitLesVersements()) {{ number_format((float) $a->versement_mensuel, 0, ',', ' ') }} CHF / mois @endif
                     </td>
@@ -59,8 +59,14 @@
                         @if ($a->archived_on)
                             <button class="btn sm ghost" wire:click="unarchiveAvoir({{ $a->id }})">Désarchiver</button>
                         @else
-                            <input type="date" style="width:150px" aria-label="Archiver à partir du" title="Vide = aujourd'hui" wire:model="archiveOn.{{ $a->id }}">
-                            <button class="btn sm ghost" wire:click="archiveAvoir({{ $a->id }})">Archiver</button>
+                            <span x-data="{ asking: false }">
+                                <button class="btn sm ghost" x-show="!asking" @click="asking = true">Archiver…</button>
+                                <span x-show="asking" x-cloak>
+                                    <input type="date" style="width:150px" aria-label="Archiver à partir du" title="Vide = aujourd'hui" wire:model="archiveOn.{{ $a->id }}">
+                                    <button class="btn sm" wire:click="archiveAvoir({{ $a->id }})">Archiver</button>
+                                    <button class="btn sm ghost" @click="asking = false" aria-label="Annuler">✕</button>
+                                </span>
+                            </span>
                         @endif
                         <button class="btn sm ghost" wire:click="deleteAvoir({{ $a->id }})" wire:confirm="Supprimer l'avoir « {{ $a->title }} » ?">Supprimer</button>
                     </td>

@@ -25,10 +25,10 @@
                     <thead><tr><th>Avoir</th><th style="text-align:right">Solde (CHF)</th><th style="text-align:right">Versement depuis le dernier relevé</th></tr></thead>
                     <tbody>
                     @foreach ($formAvoirs as $avoirs)
-                        <tr><th colspan="3" style="text-align:left">{{ $avoirs->first()->classe->title }}</th></tr>
+                        <tr><th colspan="3" style="text-align:left">{{ $avoirs->first()->classe->title }}<span class="desc">{{ $avoirs->first()->classe->description }}</span></th></tr>
                         @foreach ($avoirs as $a)
                             <tr wire:key="form-{{ $a->id }}">
-                                <td>{{ $a->title }} <span class="quiet">{{ $a->description }}</span></td>
+                                <td class="indent">{{ $a->title }}<span class="desc">{{ $a->description }}</span></td>
                                 <td style="text-align:right">
                                     <input type="text" inputmode="decimal" style="width:140px; text-align:right" aria-label="Solde {{ $a->title }}" wire:model="balances.{{ $a->id }}">
                                     @error("balances.{$a->id}") <p class="error">{{ $message }}</p> @enderror
@@ -53,28 +53,38 @@
         </section>
     @endif
 
-    {{-- Latest Relevé --}}
+    {{-- Latest Relevé: the total as a note, then the detail --}}
+    @if ($latest)
+        <div class="grid notes">
+            <div class="note" style="--note: var(--savings)">
+                <span class="label caps">Patrimoine au {{ $latest['date']->format('d.m.Y') }}</span>
+                <span class="value"><span x-data="roll({{ $latest['total'] }}, 0, 'patrimoine')">{{ $chf($latest['total']) }}</span><span class="unit caps">CHF</span></span>
+            </div>
+            @if ($latest['previousDate'])
+                <div class="note plain" style="--note: var(--paper-2)">
+                    <span class="label caps">Depuis le {{ $latest['previousDate']->format('d.m.Y') }}</span>
+                    <span class="value">{{ $latest['change'] >= 0 ? '+' : '−' }}{{ $chf(abs($latest['change'])) }}<span class="unit caps">CHF</span></span>
+                </div>
+            @endif
+        </div>
+    @endif
     <section class="panel" style="margin-bottom:16px;">
         @if ($latest)
-            <h2 class="caps">Relevé du {{ $latest['date']->format('d.m.Y') }}
-                @if ($latest['previousDate'])
-                    <span class="hint">{{ $latest['change'] >= 0 ? '+' : '−' }}{{ $chf(abs($latest['change'])) }} CHF depuis le {{ $latest['previousDate']->format('d.m.Y') }}</span>
-                @endif
-            </h2>
+            <h2 class="caps">Détail du relevé</h2>
             <table>
                 <tbody>
                 @foreach ($latest['groups'] as $g)
-                    <tr><th style="text-align:left">{{ $g['title'] }} <span class="quiet">{{ $g['description'] }}</span></th>
+                    <tr><th style="text-align:left">{{ $g['title'] }}<span class="desc">{{ $g['description'] }}</span></th>
                         <th style="text-align:right" class="num">{{ $chf($g['subtotal']) }}</th><th></th></tr>
                     @foreach ($g['avoirs'] as $a)
-                        <tr><td>{{ $a['title'] }} <span class="quiet">{{ $a['description'] }}</span></td>
+                        <tr><td class="indent">{{ $a['title'] }}<span class="desc">{{ $a['description'] }}</span></td>
                             <td style="text-align:right" class="num">{{ $chf($a['balance']) }}</td>
                             <td style="text-align:right" @class(['num', 'pos' => ($a['change'] ?? 0) > 0, 'neg' => ($a['change'] ?? 0) < 0])>
                                 @if ($a['change']) {{ $a['change'] > 0 ? '+' : '−' }}{{ $chf(abs($a['change'])) }} @endif
                             </td></tr>
                     @endforeach
                 @endforeach
-                <tr><th style="text-align:left">Total</th><th style="text-align:right" class="num">{{ $chf($latest['total']) }} CHF</th><th></th></tr>
+                <tr class="total"><th style="text-align:left">Total</th><th style="text-align:right" class="num">{{ $chf($latest['total']) }} CHF</th><th></th></tr>
                 </tbody>
             </table>
         @else
@@ -125,8 +135,12 @@
 
     {{-- Manage Classes and Avoirs (collapsible; Alpine keeps the open state across re-renders) --}}
     <section class="panel" x-data="{ open: @js($needsSetup) }">
-        <h2 class="caps">
-            <button class="btn sm ghost" type="button" @click="open = !open" :aria-expanded="open">Gérer les avoirs</button>
+        <h2 class="caps" style="margin-bottom:0" :style="open && { marginBottom: '22px' }">
+            <button type="button" @click="open = !open" :aria-expanded="open"
+                    style="all:unset; cursor:pointer; display:flex; gap:8px; align-items:center;">
+                <span x-text="open ? '−' : '+'">+</span> Gérer les avoirs
+            </button>
+            <span class="hint">titres, ordre, versements mensuels, archivage</span>
         </h2>
         <div x-show="open" x-cloak>
             <livewire:patrimoine-avoirs />

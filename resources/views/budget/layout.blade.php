@@ -210,6 +210,9 @@
         table td:first-child, table th:first-child { user-select: none; }
         th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
         tbody tr:last-child td { border-bottom: 0; }
+        .desc { color: var(--paper-3); font-weight: 400; margin-left: 8px; }
+        td.indent { padding-left: 28px; }
+        tr.total th { color: var(--paper); border-top: 1px solid var(--rule-2); }
         th { color: var(--paper-2); background: var(--vault-2); }
         tbody tr { transition: background-color .12s ease-out; }
         tbody tr:hover td { background: #1c1c20; }
