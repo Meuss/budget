@@ -1,6 +1,10 @@
 # Budget
 
-A personal finance app with two parts:
+I built this app for myself, to follow my own finances. It's public in case it's useful to
+someone else: you're welcome to fork it and adapt it for your own use, but please don't use it
+commercially.
+
+It has two parts:
 
 - **Budget**: import bank and credit-card statements, sort every transaction into categories (by
   hand or with auto-match rules), and see where the money goes and how much of it is saved. Every
