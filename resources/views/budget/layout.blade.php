@@ -44,6 +44,7 @@
             --narrow: 78%;        /* font-stretch for tracked caps */
         }
         * { box-sizing: border-box; }
+        [x-cloak] { display: none !important; }
         html { scrollbar-color: var(--rule-2) var(--vault); }
         body {
             margin: 0; background: var(--vault); color: var(--paper);
@@ -209,6 +210,9 @@
         table td:first-child, table th:first-child { user-select: none; }
         th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
         tbody tr:last-child td { border-bottom: 0; }
+        .desc { color: var(--paper-3); font-weight: 400; margin-left: 8px; }
+        td.indent { padding-left: 28px; }
+        tr.total th { color: var(--paper); border-top: 1px solid var(--rule-2); }
         th { color: var(--paper-2); background: var(--vault-2); }
         tbody tr { transition: background-color .12s ease-out; }
         tbody tr:hover td { background: #1c1c20; }
@@ -399,6 +403,7 @@
         <a class="link {{ $r === 'budget' ? 'active' : '' }}" href="/budget" wire:navigate>Tableau de bord</a>
         <a class="link {{ str_starts_with($r, 'budget/transactions') ? 'active' : '' }}" href="/budget/transactions" wire:navigate>Transactions</a>
         <a class="link {{ str_starts_with($r, 'budget/import') ? 'active' : '' }}" href="/budget/import" wire:navigate>Importer</a>
+        <a class="link {{ str_starts_with($r, 'budget/patrimoine') ? 'active' : '' }}" href="/budget/patrimoine" wire:navigate>Patrimoine</a>
         <span class="spacer"></span>
         <a class="link out" href="/cp/collections/categories" target="_blank">Catégories <x-icon name="external" size="14" /></a>
         <a class="link out" href="/cp" target="_blank">Admin <x-icon name="external" size="14" /></a>

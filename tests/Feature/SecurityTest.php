@@ -10,7 +10,7 @@ class SecurityTest extends TestCase
 {
     use RefreshDatabase;
 
-    private const BUDGET_URLS = ['/budget', '/budget/transactions', '/budget/import'];
+    private const BUDGET_URLS = ['/budget', '/budget/transactions', '/budget/import', '/budget/patrimoine'];
 
     protected function tearDown(): void
     {
