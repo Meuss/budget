@@ -93,4 +93,20 @@ class AvoirsTest extends TestCase
         $this->assertNotNull($courant->fresh());
         $this->assertNull($titres->fresh());
     }
+
+    public function test_archive_date_must_be_after_the_latest_releve_holding_the_avoir(): void
+    {
+        ['titres' => $titres] = $this->makeHoldings();
+        $this->makeReleve('2026-09-01', [$titres->id => ['1000', '0']]);
+
+        Livewire::test(PatrimoineAvoirs::class)
+            ->set("archiveOn.{$titres->id}", '2026-09-01')->call('archiveAvoir', $titres->id)
+            ->assertHasErrors(["archiveOn.{$titres->id}"]);
+        $this->assertNull($titres->fresh()->archived_on);
+
+        Livewire::test(PatrimoineAvoirs::class)
+            ->set("archiveOn.{$titres->id}", '2026-09-02')->call('archiveAvoir', $titres->id)
+            ->assertHasNoErrors();
+        $this->assertSame('2026-09-02', $titres->fresh()->archived_on->toDateString());
+    }
 }

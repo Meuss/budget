@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Avoir;
 use App\Models\Releve;
+use App\Models\ReleveLigne;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -47,11 +48,23 @@ class PatrimoineService
             ->get();
     }
 
+    /** The first Relevé after $date, if any (other than $except). */
+    public function nextReleve(string $date, ?Releve $except = null): ?Releve
+    {
+        return Releve::query()
+            ->where('date', '>', $date)
+            ->when($except, fn ($q) => $q->whereKeyNot($except->id))
+            ->orderBy('date')
+            ->first();
+    }
+
     /**
      * What the form shows for a Relevé dated $date: stored values when editing $releve, otherwise
-     * balances from the closest earlier Relevé and Versement mensuel × months since it.
+     * balances from the closest earlier Relevé and Versement mensuel × months since it. When a later
+     * Relevé exists, its Versement already covers this period, so none is proposed here.
+     * An Avoir with no balance in any earlier Relevé is optional: empty means it did not exist yet.
      *
-     * @return array<int, array{balance: string, versement: ?string}>
+     * @return array<int, array{balance: string, versement: ?string, optional: bool}>
      */
     public function draft(string $date, ?Releve $releve = null): array
     {
@@ -65,6 +78,12 @@ class PatrimoineService
             ->first();
         $previousLines = $previous?->lignes->keyBy('avoir_id') ?? collect();
         $months = $previous ? self::monthsBetween($previous->date, Carbon::parse($date)) : 0;
+        if ($this->nextReleve($date, $releve)) {
+            $months = 0;
+        }
+        $earlier = ReleveLigne::query()
+            ->whereHas('releve', fn ($q) => $q->where('date', '<', $date))
+            ->distinct()->pluck('avoir_id')->flip();
 
         $draft = [];
         foreach ($this->activeAvoirs($date) as $avoir) {
@@ -80,17 +99,17 @@ class PatrimoineService
                     : null;
             }
 
-            $draft[$avoir->id] = ['balance' => $balance, 'versement' => $versement];
+            $draft[$avoir->id] = ['balance' => $balance, 'versement' => $versement, 'optional' => ! $earlier->has($avoir->id)];
         }
 
         return $draft;
     }
 
     /**
-     * Create or update a Relevé with one line per Avoir active on $date; lines for Avoirs no longer
-     * active on that date (date moved past an archive date) are removed.
+     * Create or update a Relevé with one line per Avoir active on $date that has a balance; lines for
+     * Avoirs left empty or no longer active on that date (date moved past an archive date) are removed.
      *
-     * @param  array<int, string>  $balances  avoirId => parsed amount
+     * @param  array<int, ?string>  $balances  avoirId => parsed amount, null = no line
      * @param  array<int, string>  $versements  avoirId => parsed amount (tracked Avoirs only)
      */
     public function save(string $date, array $balances, array $versements, ?Releve $releve = null): Releve
@@ -102,6 +121,9 @@ class PatrimoineService
 
             $kept = [];
             foreach ($this->activeAvoirs($date) as $avoir) {
+                if (($balances[$avoir->id] ?? null) === null) {
+                    continue;
+                }
                 $releve->lignes()->updateOrCreate(['avoir_id' => $avoir->id], [
                     'balance' => $balances[$avoir->id],
                     'versement' => $avoir->suitLesVersements() ? ($versements[$avoir->id] ?? '0.00') : null,

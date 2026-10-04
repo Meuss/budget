@@ -20,6 +20,10 @@
                     <label>Date <input type="date" wire:model.live="date" aria-label="Date du relevé"></label>
                 </div>
                 @error('date') <p class="error">{{ $message }}</p> @enderror
+                @if ($nextReleve)
+                    <p class="muted">Un relevé plus récent existe ({{ $nextReleve->date->format('d.m.Y') }}) : ses versements couvrent déjà cette période, ils ne sont donc pas proposés ici.</p>
+                @endif
+                <p class="quiet">Un avoir qui n'existait pas encore à cette date peut rester vide.</p>
 
                 <table>
                     <thead><tr><th>Avoir</th><th style="text-align:right">Solde (CHF)</th><th style="text-align:right">Versement depuis le dernier relevé</th></tr></thead>

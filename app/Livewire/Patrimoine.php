@@ -71,16 +71,19 @@ class Patrimoine extends Component
         ]);
 
         $avoirs = $service->activeAvoirs($this->date);
-        if ($avoirs->isEmpty()) {
-            $this->addError('date', 'Aucun avoir actif à cette date.');
-
-            return;
-        }
+        $draft = $service->draft($this->date, $this->releveId ? Releve::find($this->releveId) : null);
 
         $balances = [];
         $versements = [];
         foreach ($avoirs as $avoir) {
-            $balances[$avoir->id] = PatrimoineService::parseAmount($this->balances[$avoir->id] ?? '');
+            $typed = trim((string) ($this->balances[$avoir->id] ?? ''));
+            // An Avoir with no earlier balance may be left empty: it did not exist yet on this date.
+            if ($typed === '' && $draft[$avoir->id]['optional']) {
+                $balances[$avoir->id] = null;
+
+                continue;
+            }
+            $balances[$avoir->id] = PatrimoineService::parseAmount($typed);
             if ($balances[$avoir->id] === null) {
                 $this->addError("balances.{$avoir->id}", 'Montant requis (ex. 12\'283 ou 0).');
             }
@@ -92,6 +95,11 @@ class Patrimoine extends Component
             }
         }
         if ($this->getErrorBag()->isNotEmpty()) {
+            return;
+        }
+        if (! array_filter($balances, fn ($b) => $b !== null)) {
+            $this->addError('date', 'Saisissez au moins un solde.');
+
             return;
         }
 
@@ -158,6 +166,9 @@ class Patrimoine extends Component
             'formAvoirs' => $this->formOpen && $this->validDate()
                 ? $service->activeAvoirs($this->date)->groupBy('classe_id')
                 : collect(),
+            'nextReleve' => $this->formOpen && $this->validDate()
+                ? $service->nextReleve($this->date, $this->releveId ? Releve::find($this->releveId) : null)
+                : null,
             'needsSetup' => ! Avoir::exists(),
         ])->title('Patrimoine · Savings Budget');
     }

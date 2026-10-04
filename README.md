@@ -70,7 +70,8 @@ On `/budget/patrimoine`:
 2. **Enter a Relevé:** a dated snapshot of every Avoir's balance. The form is pre-filled from the
    previous Relevé, so you only change what moved. Versements are proposed as the monthly amount
    times the number of months since the previous Relevé. Amounts accept `12'283` and
-   `12 283,50`. You can back-date a Relevé to enter your history.
+   `12 283,50`. You can back-date a Relevé to enter your history; leave empty the Avoirs that did not
+   exist yet.
 3. **Read** the latest total and its change, the detail by Classe, the total over time, the split by
    Classe, and Versements vs. returns.
 

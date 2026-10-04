@@ -46,6 +46,7 @@ class PageTest extends TestCase
     public function test_invalid_or_missing_amounts_block_saving(): void
     {
         ['courant' => $courant, 'titres' => $titres] = $this->makeHoldings();
+        $this->makeReleve('2026-08-01', [$courant->id => ['1000', null], $titres->id => ['2000', '0']]);
 
         Livewire::test(Patrimoine::class)
             ->call('newReleve')
@@ -55,7 +56,7 @@ class PageTest extends TestCase
             ->call('saveReleve')
             ->assertHasErrors(["balances.{$courant->id}", "balances.{$titres->id}"]);
 
-        $this->assertSame(0, Releve::count());
+        $this->assertSame(1, Releve::count());
     }
 
     public function test_duplicate_date_is_a_validation_error(): void
@@ -95,5 +96,35 @@ class PageTest extends TestCase
     public function test_route_is_registered_in_the_budget_group(): void
     {
         $this->assertSame(url('/budget/patrimoine'), route('budget.patrimoine'));
+    }
+
+    public function test_editing_an_old_releve_can_leave_a_newer_avoir_empty(): void
+    {
+        ['courant' => $courant, 'titres' => $titres] = $this->makeHoldings();
+        $january = $this->makeReleve('2026-01-15', [$courant->id => ['500', null]]);
+        $this->makeReleve('2026-03-15', [$courant->id => ['800', null], $titres->id => ['50000', '600']]);
+
+        Livewire::test(Patrimoine::class)
+            ->call('editReleve', $january->id)
+            ->assertSet("balances.{$titres->id}", '')
+            ->call('saveReleve')
+            ->assertHasNoErrors();
+
+        $this->assertSame([$courant->id], $january->fresh()->lignes->pluck('avoir_id')->all());
+        $report = app(\App\Services\PatrimoineReport::class);
+        $this->assertSame(['2026-03-15', 0.0, 0.0], $report->cumulativeVersements($report->releves())[1]);
+    }
+
+    public function test_a_releve_needs_at_least_one_balance(): void
+    {
+        $this->makeHoldings();
+
+        Livewire::test(Patrimoine::class)
+            ->call('newReleve')
+            ->set('date', '2026-01-15')
+            ->call('saveReleve')
+            ->assertHasErrors(['date']);
+
+        $this->assertSame(0, Releve::count());
     }
 }

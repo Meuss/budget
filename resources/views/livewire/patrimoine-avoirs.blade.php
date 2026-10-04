@@ -67,6 +67,7 @@
                                     <button class="btn sm ghost" @click="asking = false" aria-label="Annuler">✕</button>
                                 </span>
                             </span>
+                            @error("archiveOn.{$a->id}") <p class="error">{{ $message }}</p> @enderror
                         @endif
                         <button class="btn sm ghost" wire:click="deleteAvoir({{ $a->id }})" wire:confirm="Supprimer l'avoir « {{ $a->title }} » ?">Supprimer</button>
                     </td>

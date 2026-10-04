@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Avoir;
 use App\Models\Classe;
+use App\Models\ReleveLigne;
 use App\Services\PatrimoineService;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -143,7 +144,19 @@ class PatrimoineAvoirs extends Component
     public function archiveAvoir(int $id): void
     {
         $this->validate(["archiveOn.$id" => 'nullable|date_format:Y-m-d']);
-        Avoir::findOrFail($id)->update(['archived_on' => $this->archiveOn[$id] ?? now()->toDateString()]);
+        $date = ($this->archiveOn[$id] ?? '') ?: now()->toDateString();
+
+        // Archiving before a Relevé that holds this Avoir would later drop its line and rewrite that total.
+        $last = ReleveLigne::query()
+            ->join('patrimoine_releves', 'patrimoine_releves.id', '=', 'patrimoine_releve_lignes.releve_id')
+            ->where('avoir_id', $id)->max('patrimoine_releves.date');
+        if ($last && $date <= substr($last, 0, 10)) {
+            $this->addError("archiveOn.$id", 'Choisissez une date après le '.date('d.m.Y', strtotime($last)).', dernier relevé qui contient cet avoir.');
+
+            return;
+        }
+
+        Avoir::findOrFail($id)->update(['archived_on' => $date]);
         unset($this->archiveOn[$id]);
         $this->changed();
     }

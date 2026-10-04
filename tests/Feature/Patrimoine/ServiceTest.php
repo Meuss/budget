@@ -50,8 +50,8 @@ class ServiceTest extends TestCase
 
         $draft = app(PatrimoineService::class)->draft('2026-01-15');
 
-        $this->assertSame(['balance' => '', 'versement' => null], $draft[$courant->id]);
-        $this->assertSame(['balance' => '', 'versement' => '0.00'], $draft[$titres->id]);
+        $this->assertSame(['balance' => '', 'versement' => null, 'optional' => true], $draft[$courant->id]);
+        $this->assertSame(['balance' => '', 'versement' => '0.00', 'optional' => true], $draft[$titres->id]);
     }
 
     public function test_draft_prefills_from_the_closest_earlier_releve_and_multiplies_versement_mensuel(): void
@@ -59,7 +59,6 @@ class ServiceTest extends TestCase
         ['courant' => $courant, 'titres' => $titres] = $this->makeHoldings();
         $this->makeReleve('2026-06-01', [$courant->id => ['500', null], $titres->id => ['900', '300']]);
         $this->makeReleve('2026-09-01', [$courant->id => ['1000', null], $titres->id => ['2000', '300']]);
-        $this->makeReleve('2026-12-01', [$courant->id => ['9999', null], $titres->id => ['9999', '300']]); // later: ignored
 
         $draft = app(PatrimoineService::class)->draft('2026-11-20');
 
@@ -75,8 +74,8 @@ class ServiceTest extends TestCase
 
         $draft = app(PatrimoineService::class)->draft('2026-09-01', $releve);
 
-        $this->assertSame(['balance' => '1000.00', 'versement' => null], $draft[$courant->id]);
-        $this->assertSame(['balance' => '2000.00', 'versement' => '-50.00'], $draft[$titres->id]);
+        $this->assertSame(['balance' => '1000.00', 'versement' => null, 'optional' => true], $draft[$courant->id]);
+        $this->assertSame(['balance' => '2000.00', 'versement' => '-50.00', 'optional' => true], $draft[$titres->id]);
     }
 
     public function test_archived_avoir_is_left_out_from_its_archive_date_but_kept_before(): void
@@ -106,5 +105,39 @@ class ServiceTest extends TestCase
         $this->assertSame(1, Releve::count());
         $this->assertSame([$courant->id], $releve->lignes()->pluck('avoir_id')->all()); // archived line dropped
         $this->assertSame('1100.00', (string) $releve->lignes()->first()->balance);
+    }
+
+    public function test_draft_marks_avoirs_without_an_earlier_balance_as_optional(): void
+    {
+        ['courant' => $courant, 'titres' => $titres] = $this->makeHoldings();
+        $this->makeReleve('2026-01-15', [$courant->id => ['500', null]]);
+
+        $draft = app(PatrimoineService::class)->draft('2026-03-01');
+
+        $this->assertFalse($draft[$courant->id]['optional']);
+        $this->assertTrue($draft[$titres->id]['optional']);
+    }
+
+    public function test_save_skips_avoirs_left_empty(): void
+    {
+        ['courant' => $courant, 'titres' => $titres] = $this->makeHoldings();
+
+        $releve = app(PatrimoineService::class)->save('2026-01-15', [$courant->id => '100.00', $titres->id => null], []);
+
+        $this->assertSame([$courant->id], $releve->lignes->pluck('avoir_id')->all());
+    }
+
+    public function test_backfilled_releve_proposes_no_versement_and_names_the_later_releve(): void
+    {
+        ['courant' => $courant, 'titres' => $titres] = $this->makeHoldings();
+        $this->makeReleve('2026-01-15', [$courant->id => ['500', null], $titres->id => ['1000', '0']]);
+        $this->makeReleve('2026-03-15', [$courant->id => ['600', null], $titres->id => ['1700', '600']]);
+        $service = app(PatrimoineService::class);
+
+        // The March Versement already covers January → March: proposing 300 for February would count it twice.
+        $this->assertSame('0.00', $service->draft('2026-02-15')[$titres->id]['versement']);
+        $this->assertSame('500.00', $service->draft('2026-02-15')[$courant->id]['balance']); // from January, not March
+        $this->assertSame('2026-03-15', $service->nextReleve('2026-02-15')->date->toDateString());
+        $this->assertNull($service->nextReleve('2026-04-01'));
     }
 }
