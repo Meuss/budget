@@ -54,6 +54,29 @@ new key, replace the line in `authorized_keys`, and
 5. Push to `master`. Then log in at `/cp` and set up two-factor authentication (required for all
    users; `/budget` is unreachable until it's done).
 
+## Monthly reminder email
+
+On the 2nd of every month at 08:00 (`BUDGET_REMINDER_TIMEZONE`, default `Europe/Zurich`), the app
+emails `BUDGET_REMINDER_EMAIL` a reminder to import new statements and enter a Relevé, with the
+dates of the latest transaction and Relevé. It needs, on the server:
+
+1. **Mail settings** in `.env`: `MAIL_MAILER=smtp`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_SCHEME`,
+   `MAIL_USERNAME`, `MAIL_PASSWORD` and `MAIL_FROM_ADDRESS` (for an Infomaniak mailbox:
+   `mail.infomaniak.com`, port `587`, scheme `smtp`, which uses STARTTLS), plus `BUDGET_REMINDER_EMAIL`. Then run
+   `/opt/php8.5/bin/php artisan config:cache` so the cached config picks them up.
+2. **A trigger.** Infomaniak's "Tâches planifiées" can only call a URL, so it calls
+   `https://<domain>/cron/reminder` instead of running the Laravel scheduler:
+   - In `.env`, set `BUDGET_REMINDER_TOKEN` to a long random string (`openssl rand -hex 32`).
+   - Manager → Tâches planifiées → new task: URL `https://<domain>/cron/reminder`, tick
+     "Cette URL est protégée par un mot de passe", any username, the token as password; run it
+     monthly, on the 2nd, at 08:00.
+
+   Without the token the URL answers 404. On a host with a real crontab, run
+   `php artisan schedule:run` every minute instead (the reminder is scheduled in `routes/console.php`).
+
+Test it by running the task once from the Manager, or with
+`curl -u cron:<token> https://<domain>/cron/reminder`.
+
 ## Pulling production data locally
 
 `scripts/pull-production.sh` replaces the local database with a production dump (after backing
@@ -62,7 +85,7 @@ in your local `.env` first.
 
 ## Lost password or 2FA device
 
-There is no outgoing mail, so recovery is over SSH, from the site folder:
+Password reset by email is disabled, so recovery is over SSH, from the site folder:
 
 - New password: `/opt/php8.5/bin/php please tinker` →
   `Statamic\Facades\User::findByEmail('…')->password('…')->save();`

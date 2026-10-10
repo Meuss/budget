@@ -81,6 +81,14 @@ On `/budget/patrimoine`:
 
 Closed Avoirs are archived from a date rather than deleted, so past totals never change.
 
+### Monthly reminder
+
+Set `BUDGET_REMINDER_EMAIL` and the app emails you on the 2nd of every month (08:00) to import the
+new statements and enter a Relevé. It needs working mail settings and a trigger: the Laravel
+scheduler (`php artisan schedule:run` every minute from cron), or, for hosts that can only call a
+URL, `/cron/reminder` protected by `BUDGET_REMINDER_TOKEN`; see [docs/deployment.md](docs/deployment.md#monthly-reminder-email).
+Send one now with `php artisan budget:remind`.
+
 ![Patrimoine: latest Relevé by Classe, total over time and split by Classe (synthetic data)](screenshot-3.png)
 
 ## Bank exports (UBS)
